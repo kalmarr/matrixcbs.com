@@ -52,4 +52,12 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- Privacy Policy page -->
+  <url>
+    <loc>https://matrixcbs.com/adatvedelem.html</loc>
+    <lastmod>2024-12-18</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
 </urlset>
