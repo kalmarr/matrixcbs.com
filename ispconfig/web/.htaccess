@@ -4,6 +4,23 @@
 #
 
 # ============================================
+# ModSecurity Exception for Contact Form
+# ============================================
+<IfModule mod_security2.c>
+  <Files "send-mail.php">
+    SecRuleEngine Off
+  </Files>
+</IfModule>
+
+# Alternative: Disable specific rules that might block POST
+<IfModule mod_security.c>
+  <Files "send-mail.php">
+    SecFilterEngine Off
+    SecFilterScanPOST Off
+  </Files>
+</IfModule>
+
+# ============================================
 # HTTPS Redirect
 # ============================================
 <IfModule mod_rewrite.c>
