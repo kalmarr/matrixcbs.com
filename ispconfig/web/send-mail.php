@@ -256,17 +256,17 @@ Felnőttképző nyilvántartásba vételi szám: B/2020/000668
 function sendAdminEmail(string $name, string $email, string $subject, string $message, string $ip): bool {
     $timestamp = date('Y-m-d H:i:s');
 
-    $body = "Uj uzenet erkezett a weboldalrol\n";
-    $body .= "================================\n\n";
-    $body .= "Idopont: {$timestamp}\n";
-    $body .= "IP cim: {$ip}\n\n";
-    $body .= "Kuldo adatai:\n";
-    $body .= "-------------\n";
-    $body .= "Nev: {$name}\n";
+    $body = "Új üzenet érkezett a weboldalról\n";
+    $body .= "════════════════════════════════\n\n";
+    $body .= "Időpont: {$timestamp}\n";
+    $body .= "IP cím: {$ip}\n\n";
+    $body .= "Küldő adatai:\n";
+    $body .= "─────────────\n";
+    $body .= "Név: {$name}\n";
     $body .= "E-mail: {$email}\n\n";
-    $body .= "Targy: {$subject}\n\n";
-    $body .= "Uzenet:\n";
-    $body .= "-------\n";
+    $body .= "Tárgy: {$subject}\n\n";
+    $body .= "Üzenet:\n";
+    $body .= "───────\n";
     $body .= $message . "\n";
 
     $headers = [
@@ -289,19 +289,19 @@ if (isset($_POST['action']) && $_POST['action'] === 'get_token') {
 try {
     // Rate limiting
     if (!checkRateLimit()) {
-        throw new Exception('Kerem, varjon egy percet a kovetkezo uzenet kuldese elott.');
+        throw new Exception('Kérem, várjon egy percet a következő üzenet küldése előtt.');
     }
 
     // Validate CSRF token
     $csrfToken = $_POST['csrf_token'] ?? '';
     if (!validateCsrfToken($csrfToken)) {
-        throw new Exception('Ervenytelen biztonsagi token. Kerem, frissitse az oldalt es probalkozzon ujra.');
+        throw new Exception('Érvénytelen biztonsági token. Kérem, frissítse az oldalt és próbálkozzon újra.');
     }
 
     // Honeypot check - if filled, it's a bot
     if (!empty($_POST['website'])) {
         // Bot detected, silently accept but don't process
-        echo json_encode(['success' => true, 'message' => 'Uzenet sikeresen elkuldve!']);
+        echo json_encode(['success' => true, 'message' => 'Üzenet sikeresen elküldve!']);
         exit;
     }
 
@@ -316,31 +316,31 @@ try {
     // GDPR consent validation
     $gdprConsent = isset($_POST['gdpr_consent']) && $_POST['gdpr_consent'] === 'on';
     if (!$gdprConsent) {
-        throw new Exception('Kerjuk, fogadja el az adatvedelmi tajekoztato feltételeit.');
+        throw new Exception('Kérjük, fogadja el az adatvédelmi tájékoztató feltételeit.');
     }
 
     // Validation
     $errors = [];
 
     if (empty($name) || strlen($name) < 2 || strlen($name) > 100) {
-        $errors[] = 'Ervenytelen nev (2-100 karakter szukseges).';
+        $errors[] = 'Érvénytelen név (2-100 karakter szükséges).';
     }
 
     if (empty($email) || !isValidEmail($email)) {
-        $errors[] = 'Ervenytelen e-mail cim.';
+        $errors[] = 'Érvénytelen e-mail cím.';
     }
 
     if (empty($subject) || strlen($subject) < 3 || strlen($subject) > 200) {
-        $errors[] = 'Ervenytelen targy (3-200 karakter szukseges).';
+        $errors[] = 'Érvénytelen tárgy (3-200 karakter szükséges).';
     }
 
     if (empty($message) || strlen($message) < 10 || strlen($message) > 5000) {
-        $errors[] = 'Ervenytelen uzenet (10-5000 karakter szukseges).';
+        $errors[] = 'Érvénytelen üzenet (10-5000 karakter szükséges).';
     }
 
     // Validate CAPTCHA
     if ($captcha !== $captchaAnswer) {
-        $errors[] = 'Hibas biztonsagi valasz.';
+        $errors[] = 'Hibás biztonsági válasz.';
     }
 
     if (!empty($errors)) {
@@ -355,7 +355,7 @@ try {
     $userSent = sendUserEmail($email, $name, $subject, $message);
 
     if (!$adminSent && !$userSent) {
-        throw new Exception('Hiba tortent az uzenet kuldese kozben. Kerem, probalkozzon kesobb.');
+        throw new Exception('Hiba történt az üzenet küldése közben. Kérem, próbálkozzon később.');
     }
 
     // Regenerate CSRF token after successful submission
@@ -363,7 +363,7 @@ try {
 
     echo json_encode([
         'success' => true,
-        'message' => 'Koszonjuk uzenetet! Hamarosan felvesszuk Onnel a kapcsolatot.'
+        'message' => 'Köszönjük üzenetét! Hamarosan felvesszük Önnel a kapcsolatot.'
     ]);
 
 } catch (Exception $e) {
