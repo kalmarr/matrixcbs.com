@@ -20,14 +20,6 @@
     <priority>1.0</priority>
   </url>
 
-  <!-- About page -->
-  <url>
-    <loc>https://matrixcbs.com/rolunk.html</loc>
-    <lastmod>2024-12-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
   <!-- Training page -->
   <url>
     <loc>https://matrixcbs.com/trening.html</loc>
