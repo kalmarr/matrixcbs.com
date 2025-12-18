@@ -4,6 +4,14 @@
  * Secure PHP mail handler with CSRF protection, validation, and dual email sending
  */
 
+// Start output buffering to prevent any accidental output before JSON
+ob_start();
+
+// Disable error display (errors will still be logged)
+error_reporting(E_ALL);
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+
 // Start session for CSRF token management
 session_start();
 
@@ -12,6 +20,9 @@ define('ADMIN_EMAIL', 'info@matrixcbs.com');
 define('SITE_NAME', 'MATRIX CBS Kft.');
 define('MAIL_FROM', 'noreply@matrixcbs.com');
 define('RATE_LIMIT_SECONDS', 60);
+
+// Clean any output that might have been generated (PHP warnings, etc.)
+ob_end_clean();
 
 // Set content type for JSON responses
 header('Content-Type: application/json; charset=utf-8');
