@@ -1,0 +1,25 @@
+# System files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# IDE
+.idea/
+.vscode/
+*.sublime-*
+
+# Playwright MCP (local browser automation)
+.playwright-mcp/
+
+# Logs
+*.log
+error_log
+
+# Environment
+.env
+.env.local
+
+# Backup files
+*.bak
+*~

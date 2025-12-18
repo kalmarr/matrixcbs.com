@@ -1,0 +1,145 @@
+#
+# MATRIX CBS Kft. - Modern Security Configuration
+# ISPConfig Compatible
+#
+
+# ============================================
+# HTTPS Redirect
+# ============================================
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Force HTTPS
+  RewriteCond %{HTTPS} off
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Remove www (optional - uncomment if needed)
+  # RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  # RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# ============================================
+# Security Headers
+# ============================================
+<IfModule mod_headers.c>
+  # HSTS - Force HTTPS for 1 year
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+  # Prevent clickjacking
+  Header always set X-Frame-Options "SAMEORIGIN"
+
+  # XSS Protection
+  Header always set X-XSS-Protection "1; mode=block"
+
+  # Prevent MIME type sniffing
+  Header always set X-Content-Type-Options "nosniff"
+
+  # Referrer Policy
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # Permissions Policy
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=()"
+
+  # Content Security Policy
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data: https: blob:; frame-src https://www.google.com https://www.facebook.com https://maps.google.com; connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com;"
+
+  # Remove server information
+  Header unset X-Powered-By
+  Header unset Server
+</IfModule>
+
+# ============================================
+# Directory Security
+# ============================================
+# Disable directory listing
+Options -Indexes
+
+# Follow symbolic links
+Options +FollowSymLinks
+
+# Default directory index
+DirectoryIndex index.html index.php
+
+# ============================================
+# File Protection
+# ============================================
+# Protect sensitive files
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|sql|bak|config|csr|key|pem)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# Block access to hidden files and directories
+<IfModule mod_rewrite.c>
+  RewriteRule "(^|/)\.(?!well-known)" - [F]
+</IfModule>
+
+# ============================================
+# PHP Settings (ISPConfig compatible)
+# ============================================
+<IfModule mod_php.c>
+  php_flag display_errors Off
+  php_flag log_errors On
+  php_flag session.cookie_httponly On
+  php_flag session.cookie_secure On
+  php_value session.cookie_samesite "Strict"
+</IfModule>
+
+# ============================================
+# Caching
+# ============================================
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # Default expiration: 1 week
+  ExpiresDefault "access plus 1 week"
+
+  # HTML - no cache (for dynamic content)
+  ExpiresByType text/html "access plus 0 seconds"
+
+  # CSS and JavaScript - 1 month
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType text/javascript "access plus 1 month"
+
+  # Images - 1 month
+  ExpiresByType image/jpeg "access plus 1 month"
+  ExpiresByType image/png "access plus 1 month"
+  ExpiresByType image/gif "access plus 1 month"
+  ExpiresByType image/webp "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 month"
+  ExpiresByType image/x-icon "access plus 1 year"
+
+  # Fonts - 1 year
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType application/font-woff "access plus 1 year"
+  ExpiresByType application/font-woff2 "access plus 1 year"
+
+  # Do not cache PHP
+  <FilesMatch \.php$>
+    ExpiresActive Off
+  </FilesMatch>
+</IfModule>
+
+# ============================================
+# Compression
+# ============================================
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+  AddOutputFilterByType DEFLATE application/javascript application/x-javascript text/javascript
+  AddOutputFilterByType DEFLATE application/json application/xml
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# ============================================
+# Error Documents
+# ============================================
+ErrorDocument 404 /index.html
+ErrorDocument 403 /index.html
+ErrorDocument 500 /index.html

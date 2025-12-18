@@ -1,0 +1,21 @@
+Az ISPConfig felületéhez igazodva frissítsd a webes könyvtárakat a legújabb Bootstrap, JavaScript és jQuery verziókra.
+
+A frontendet fejleszd: javítsd az oldalak dizájnját Front Design MCP segítségével, és tedd teljesen reszponzívvá.
+
+A „Kapcsolat” oldalon készíts egy egyszerű kapcsolati űrlapot az alábbi mezőkkel:
+
+Név
+
+E-mail
+
+Tárgy
+
+Üzenet
+
+Tegyél bele egy honeypot mezőt, valamint egy egyszerű matematikai CAPTCHA-t.
+
+Az űrlap elküldése után a levél HTML formátumban (az oldal arculatához illeszkedően) a felhasználónak is menjen ki, és plain text formátumban mi is kapjuk meg az info@matrixcbs.com
+ címre.
+
+Végezz biztonsági elemzést is a teljes weboldalra sempreg mcp-vel és ügynökkel (űrlap- és e-mail-küldés vonatkozásában), hogy a megoldás élesíthető és biztonságosan használható legyen.
+Gyors fejlesztésre használj több ügynököt
