@@ -103,7 +103,12 @@ DirectoryIndex index.html
     Require all denied
 </FilesMatch>
 
-# Prevent PHP execution (static site only)
+# Prevent PHP execution except for allowed scripts
 <FilesMatch "\.php$">
     Require all denied
 </FilesMatch>
+
+# Allow contact form handler
+<Files "send-mail.php">
+    Require all granted
+</Files>
