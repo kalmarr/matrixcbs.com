@@ -1,15 +1,5 @@
-# MATRIX CBS Kft. - Robots.txt
-# https://matrixcbs.com
-
 User-agent: *
 Allow: /
+Disallow: /_next/
 
-# Disallow admin and error pages
-Disallow: /error/
-Disallow: /nevjegy/
-
-# Sitemap location
 Sitemap: https://matrixcbs.com/sitemap.xml
-
-# Crawl delay (optional - be polite to crawlers)
-Crawl-delay: 1
