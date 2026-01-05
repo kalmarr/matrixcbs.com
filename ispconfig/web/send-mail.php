@@ -1,8 +1,17 @@
 <?php
 /**
  * Contact Form Handler for MATRIX CBS Kft.
- * Secure PHP mail handler with CSRF protection, validation, and dual email sending
+ * Secure PHP mail handler for static Next.js site
+ * Version: 2.4 - Modern Design Update
+ * Updated: 2024-12-22
  */
+
+// Version check endpoint
+if (isset($_GET['version'])) {
+    header('Content-Type: text/plain');
+    echo 'Version 2.4 - Modern Design - ' . date('Y-m-d H:i:s');
+    exit;
+}
 
 // Start output buffering to prevent any accidental output before JSON
 ob_start();
@@ -12,14 +21,10 @@ error_reporting(E_ALL);
 ini_set('display_errors', '0');
 ini_set('log_errors', '1');
 
-// Start session for CSRF token management
-session_start();
-
 // Configuration
 define('ADMIN_EMAIL', 'info@matrixcbs.com');
 define('SITE_NAME', 'MATRIX CBS Kft.');
 define('MAIL_FROM', 'noreply@matrixcbs.com');
-define('RATE_LIMIT_SECONDS', 60);
 
 // Clean any output that might have been generated (PHP warnings, etc.)
 ob_end_clean();
@@ -32,35 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['success' => false, 'message' => 'Method not allowed']);
     exit;
-}
-
-/**
- * Generate CSRF token
- */
-function generateCsrfToken(): string {
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-    return $_SESSION['csrf_token'];
-}
-
-/**
- * Validate CSRF token
- */
-function validateCsrfToken(string $token): bool {
-    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
-}
-
-/**
- * Rate limiting check
- */
-function checkRateLimit(): bool {
-    $lastSubmission = $_SESSION['last_submission'] ?? 0;
-    if (time() - $lastSubmission < RATE_LIMIT_SECONDS) {
-        return false;
-    }
-    $_SESSION['last_submission'] = time();
-    return true;
 }
 
 /**
@@ -90,7 +66,7 @@ function isValidEmail(string $email): bool {
 
 /**
  * Send multipart email to user (HTML + Plain Text)
- * Design matches the Editorial Sophistication website theme
+ * Design matches the modern MATRIX CBS website theme (orange + dark gray)
  */
 function sendUserEmail(string $to, string $name, string $subject, string $message): bool {
     $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
@@ -101,7 +77,7 @@ function sendUserEmail(string $to, string $name, string $subject, string $messag
     $plainText = "
 ════════════════════════════════════════════════════════════════
                       MATRIX CBS Kft.
-              Út a céljaihoz! - Alapítva 2006.
+              Út a céljaihoz! · Alapítva 2006
 ════════════════════════════════════════════════════════════════
 
 Kedves {$name}!
@@ -133,7 +109,7 @@ Felnőttképző nyilvántartásba vételi szám: B/2020/000668
 ════════════════════════════════════════════════════════════════
 ";
 
-    // HTML Version - Editorial Sophistication Design
+    // HTML Version - Modern MATRIX CBS Design (Orange + Dark Gray)
     $htmlBody = '<!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -141,67 +117,71 @@ Felnőttképző nyilvántartásba vételi szám: B/2020/000668
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Köszönjük megkeresését!</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; background-color: #faf8f5;">
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, \'Helvetica Neue\', Arial, sans-serif; background-color: #f9fafb;">
     <table role="presentation" style="width: 100%; border-collapse: collapse;">
         <tr>
             <td style="padding: 40px 20px;">
-                <table role="presentation" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);">
+                <table role="presentation" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);">
 
-                    <!-- Header - Deep Navy -->
+                    <!-- Header - Dark Gray with gradient -->
                     <tr>
-                        <td style="background: linear-gradient(135deg, #0f172a 0%, #1e3a5a 100%); padding: 48px 40px; text-align: center;">
-                            <h1 style="color: #ffffff; margin: 0; font-family: Georgia, Times, serif; font-size: 32px; font-weight: 600; letter-spacing: -0.5px;">MATRIX CBS</h1>
-                            <p style="color: #f59e0b; margin: 12px 0 0 0; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">Út a céljaihoz! · Alapítva 2006</p>
+                        <td style="background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #111827 100%); padding: 48px 40px; text-align: center; position: relative;">
+                            <!-- Decorative accent -->
+                            <div style="position: absolute; top: 0; right: 0; width: 150px; height: 150px; background: linear-gradient(135deg, rgba(232, 90, 36, 0.15) 0%, transparent 70%);"></div>
+                            <h1 style="color: #ffffff; margin: 0; font-size: 36px; font-weight: 700; letter-spacing: -0.5px;">MATRIX <span style="color: #E85A24;">CBS</span></h1>
+                            <p style="color: #E85A24; margin: 12px 0 0 0; font-size: 14px; font-weight: 600; letter-spacing: 1px;">Út a céljaihoz! · Alapítva 2006</p>
                         </td>
                     </tr>
 
-                    <!-- Amber Accent Line -->
+                    <!-- Orange Accent Line with Burgundy gradient -->
                     <tr>
-                        <td style="background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%); height: 4px;"></td>
+                        <td style="background: linear-gradient(90deg, #E85A24 0%, #9B2C2C 100%); height: 4px;"></td>
                     </tr>
 
                     <!-- Content -->
                     <tr>
-                        <td style="padding: 48px 40px;">
-                            <h2 style="color: #0f172a; margin: 0 0 24px 0; font-family: Georgia, Times, serif; font-size: 24px; font-weight: 500;">Kedves ' . $safeName . '!</h2>
+                        <td style="padding: 48px 40px; background-color: #ffffff;">
+                            <h2 style="color: #111827; margin: 0 0 24px 0; font-size: 24px; font-weight: 600;">Kedves ' . $safeName . '!</h2>
 
-                            <p style="color: #475569; line-height: 1.7; margin: 0 0 28px 0; font-size: 16px;">
+                            <p style="color: #4b5563; line-height: 1.7; margin: 0 0 28px 0; font-size: 16px;">
                                 Köszönjük, hogy felkereste cégünket! Üzenetét sikeresen megkaptuk, és munkatársunk hamarosan felveszi Önnel a kapcsolatot.
                             </p>
 
                             <!-- Message Box -->
-                            <div style="background-color: #faf8f5; border-left: 4px solid #f59e0b; border-radius: 0 12px 12px 0; padding: 24px; margin: 32px 0;">
-                                <p style="color: #0f172a; margin: 0 0 16px 0; font-family: Georgia, Times, serif; font-size: 18px; font-weight: 500;">
-                                    <span style="color: #f59e0b;">✦</span> Az Ön üzenete
+                            <div style="background-color: #f9fafb; border-left: 4px solid #E85A24; border-radius: 0 12px 12px 0; padding: 24px; margin: 32px 0;">
+                                <p style="color: #111827; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">
+                                    <span style="color: #E85A24;">●</span> Az Ön üzenete
                                 </p>
-                                <p style="color: #64748b; margin: 0 0 8px 0; font-size: 14px;">
-                                    <strong style="color: #334155;">Tárgy:</strong> ' . $safeSubject . '
+                                <p style="color: #6b7280; margin: 0 0 8px 0; font-size: 14px;">
+                                    <strong style="color: #374151;">Tárgy:</strong> ' . $safeSubject . '
                                 </p>
-                                <p style="color: #475569; margin: 0; font-size: 15px; line-height: 1.6; white-space: pre-wrap;">' . $safeMessage . '</p>
+                                <p style="color: #4b5563; margin: 0; font-size: 15px; line-height: 1.6; white-space: pre-wrap;">' . $safeMessage . '</p>
                             </div>
 
-                            <p style="color: #475569; line-height: 1.7; margin: 32px 0 0 0; font-size: 16px;">
+                            <p style="color: #4b5563; line-height: 1.7; margin: 32px 0 0 0; font-size: 16px;">
                                 Üdvözlettel,
                             </p>
-                            <p style="color: #0f172a; margin: 8px 0 0 0; font-family: Georgia, Times, serif; font-size: 18px; font-weight: 500;">
+                            <p style="color: #111827; margin: 8px 0 0 0; font-size: 18px; font-weight: 600;">
                                 MATRIX CBS Kft. csapata
                             </p>
                         </td>
                     </tr>
 
-                    <!-- Footer - Deep Navy -->
+                    <!-- Footer - Dark Gray with Burgundy border -->
                     <tr>
-                        <td style="background: linear-gradient(135deg, #0f172a 0%, #1e3a5a 100%); padding: 32px 40px; text-align: center;">
-                            <p style="color: #94a3b8; margin: 0 0 8px 0; font-size: 14px;">
+                        <td style="background-color: #111827; border-top: 4px solid #9B2C2C; padding: 32px 40px; text-align: center;">
+                            <p style="color: #9ca3af; margin: 0 0 8px 0; font-size: 14px;">
                                 <strong style="color: #ffffff;">MATRIX CBS Kft.</strong>
                             </p>
-                            <p style="color: #64748b; margin: 0 0 16px 0; font-size: 13px; line-height: 1.5;">
+                            <p style="color: #6b7280; margin: 0 0 16px 0; font-size: 13px; line-height: 1.6;">
                                 Pulcz utca 3-2., 6724 Szeged<br>
-                                Tel: +36 70 327 2146 · info@matrixcbs.com
+                                <a href="tel:+36703272146" style="color: #9ca3af; text-decoration: none;">+36 70 327 2146</a> · <a href="mailto:info@matrixcbs.com" style="color: #9ca3af; text-decoration: none;">info@matrixcbs.com</a>
                             </p>
-                            <p style="color: #475569; margin: 0; font-size: 11px; border-top: 1px solid #334155; padding-top: 16px;">
-                                Felnőttképző nyilvántartásba vételi szám: B/2020/000668
-                            </p>
+                            <div style="border-top: 1px solid #374151; padding-top: 16px; margin-top: 8px;">
+                                <p style="color: #6b7280; margin: 0 0 4px 0; font-size: 11px;">
+                                    Felnőttképző nyilvántartásba vételi szám: <span style="color: #E85A24; font-weight: 600;">B/2020/000668</span>
+                                </p>
+                            </div>
                         </td>
                     </tr>
 
@@ -211,8 +191,11 @@ Felnőttképző nyilvántartásba vételi szám: B/2020/000668
                 <table role="presentation" style="max-width: 600px; margin: 24px auto 0;">
                     <tr>
                         <td style="text-align: center;">
-                            <p style="color: #94a3b8; margin: 0; font-size: 12px;">
-                                <a href="https://matrixcbs.com" style="color: #f59e0b; text-decoration: none;">matrixcbs.com</a>
+                            <p style="color: #9ca3af; margin: 0 0 12px 0; font-size: 12px;">
+                                <a href="https://matrixcbs.com" style="color: #E85A24; text-decoration: none; font-weight: 600;">matrixcbs.com</a>
+                            </p>
+                            <p style="color: #6b7280; margin: 0; font-size: 11px;">
+                                © ' . date('Y') . ' MATRIX CBS Kft. Minden jog fenntartva.
                             </p>
                         </td>
                     </tr>
@@ -279,18 +262,8 @@ function sendAdminEmail(string $name, string $email, string $subject, string $me
     return mail(ADMIN_EMAIL, '=?UTF-8?B?' . base64_encode('[Weboldal] ' . $subject) . '?=', $body, implode("\r\n", $headers));
 }
 
-// Handle token request
-if (isset($_POST['action']) && $_POST['action'] === 'get_token') {
-    echo json_encode(['token' => generateCsrfToken()]);
-    exit;
-}
-
 // Main form processing
 try {
-    // Rate limiting (IP-based for static sites)
-    // Note: Session-based rate limiting may not work reliably with static sites
-    // Additional protection: honeypot, captcha, input validation
-
     // Honeypot check - if filled, it's a bot
     if (!empty($_POST['website'])) {
         // Bot detected, silently accept but don't process
@@ -306,8 +279,9 @@ try {
     $captcha = $_POST['captcha'] ?? '';
     $captchaAnswer = $_POST['captcha_answer'] ?? '';
 
-    // GDPR consent validation
-    $gdprConsent = isset($_POST['gdpr_consent']) && $_POST['gdpr_consent'] === 'on';
+    // GDPR consent validation (accepts: 'on', 'true', '1', true, 1)
+    $gdprValue = $_POST['gdpr_consent'] ?? '';
+    $gdprConsent = in_array($gdprValue, ['on', 'true', '1', true, 1], true) || $gdprValue === true;
     if (!$gdprConsent) {
         throw new Exception('Kérjük, fogadja el az adatvédelmi tájékoztató feltételeit.');
     }
@@ -350,9 +324,6 @@ try {
     if (!$adminSent && !$userSent) {
         throw new Exception('Hiba történt az üzenet küldése közben. Kérem, próbálkozzon később.');
     }
-
-    // Regenerate CSRF token after successful submission
-    unset($_SESSION['csrf_token']);
 
     echo json_encode([
         'success' => true,

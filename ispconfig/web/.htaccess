@@ -84,14 +84,23 @@ DirectoryIndex index.html
 # Rewrite Rules
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    
+
+    # Legacy URL redirects (pre-Next.js migration)
+    Redirect 301 /rolunk.html /
+    Redirect 301 /trening.html /trening/
+    Redirect 301 /szolgaltasok.html /szolgaltasok/
+    Redirect 301 /contact.html /kapcsolat/
+    Redirect 301 /adatvedelem.html /adatvedelem/
+
     # Force HTTPS (uncomment for production)
     # RewriteCond %{HTTPS} off
     # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
     
-    # Remove trailing slash except for directories
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.+)/$ /$1 [L,R=301]
+    # Add trailing slash (consistent with sitemap and canonical URLs)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_URI} !/$
+    RewriteCond %{REQUEST_URI} !\.
+    RewriteRule ^(.*)$ /$1/ [L,R=301]
     
     # Serve .html files without extension
     RewriteCond %{REQUEST_FILENAME} !-f
