@@ -23,3 +23,19 @@ error_log
 # Backup files
 *.bak
 *~
+
+# Internal/Private files - NEVER upload
+Feladat
+MIGRATION_PROGRESS.md
+*.tar.xz
+*.tar.gz
+*.zip
+
+# Old backup directories
+ispconfig-matrix/
+
+# Next.js debug files
+__next.*.txt
+
+# Claude internal
+.claude/
