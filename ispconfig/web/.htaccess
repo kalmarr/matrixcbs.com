@@ -1,5 +1,6 @@
 # MATRIX CBS Kft. - ISPConfig Apache Configuration
 # ================================================
+# Updated: 2026-01-11 - Google Search Console SEO fixes
 
 # Error Documents
 ErrorDocument 400 /error/400.html
@@ -28,8 +29,8 @@ ErrorDocument 503 /error/503.html
     # Content Security Policy (GDPR compatible with GTM)
     Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://tagmanager.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://tagmanager.google.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https://www.google-analytics.com https://www.facebook.com https://www.googletagmanager.com https://ssl.gstatic.com https://www.gstatic.com; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com; frame-src https://www.google.com https://www.facebook.com https://www.google.com/maps;"
     
-    # HSTS (uncomment for production with HTTPS)
-    # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    # HSTS - HTTP Strict Transport Security
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
 </IfModule>
 
 # GZIP Compression
@@ -92,9 +93,25 @@ DirectoryIndex index.html
     Redirect 301 /contact.html /kapcsolat/
     Redirect 301 /adatvedelem.html /adatvedelem/
 
-    # Force HTTPS (uncomment for production)
-    # RewriteCond %{HTTPS} off
-    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    # Legacy URL redirects (Google Search Console 404s)
+    Redirect 301 /content/home-business-3 /
+    Redirect 301 /content/home-business /
+    Redirect 301 /home /
+    Redirect 301 /blog/nyelvvizsgara-jelentkezes /
+    Redirect 301 /blog /
+    Redirect 301 /tartalom/rappai-csavar-kft-tamop-213a-111 /
+    Redirect 301 /tartalom /
+
+    # 410 Gone for unknown/spam pages
+    RewriteRule ^xawebuf$ - [G,L]
+
+    # Force HTTPS
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Redirect www to non-www (canonical URL: matrixcbs.com)
+    RewriteCond %{HTTP_HOST} ^www\.matrixcbs\.com$ [NC]
+    RewriteRule ^(.*)$ https://matrixcbs.com/$1 [R=301,L]
     
     # Add trailing slash (consistent with sitemap and canonical URLs)
     RewriteCond %{REQUEST_FILENAME} !-f
