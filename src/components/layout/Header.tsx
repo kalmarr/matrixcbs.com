@@ -13,6 +13,9 @@ const navLinks = [
   { href: '/szervezeti-kihivasok', label: 'Szervezeti Kihívások' },
   { href: '/megoldasaink', label: 'Megoldásaink' },
   { href: '/rolunk', label: 'Rólunk' },
+  { href: '/referenciak', label: 'Referenciák' },
+  { href: '/gyik', label: 'GYIK' },
+  { href: '/blog', label: 'Blog' },
 ];
 
 export function Header() {
@@ -66,11 +69,12 @@ export function Header() {
             >
               {/* Mobile: Icon logo */}
               <Image
-                src="/logo/Logo_ikon.svg"
+                src="/logo/Logo_ikon-mobile.png"
                 alt="MATRIX CBS Kft."
                 width={40}
                 height={40}
-                className="block sm:hidden h-10 w-10"
+                className="block sm:hidden h-10"
+                style={{ width: 'auto' }}
                 priority
               />
               {/* Desktop: Full logo */}
@@ -79,7 +83,8 @@ export function Header() {
                 alt="MATRIX CBS Kft."
                 width={180}
                 height={35}
-                className="hidden sm:block h-10 w-auto"
+                className="hidden sm:block h-10"
+                style={{ width: 'auto' }}
                 priority
               />
             </Link>
@@ -123,11 +128,13 @@ export function Header() {
             <button
               type="button"
               className={cn(
-                'lg:hidden relative z-10 p-2',
+                'lg:hidden relative z-10 p-3',
                 'text-[var(--color-text-primary)]',
+                'bg-[var(--color-bg-secondary)]/50',
                 'hover:bg-[var(--color-bg-secondary)]',
                 'rounded-[var(--radius-md)]',
-                'transition-colors duration-[var(--transition-fast)]'
+                'transition-colors duration-[var(--transition-fast)]',
+                'min-w-[44px] min-h-[44px] flex items-center justify-center'
               )}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-expanded={isMobileMenuOpen}

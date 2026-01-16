@@ -76,7 +76,8 @@ export function Footer() {
                 alt="MATRIX CBS Kft."
                 width={140}
                 height={28}
-                className="h-7 w-auto"
+                className="h-7"
+                style={{ width: 'auto' }}
               />
             </Link>
             <p className="text-sm text-[var(--color-text-muted)] mb-4">

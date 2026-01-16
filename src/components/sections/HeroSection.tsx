@@ -10,7 +10,7 @@ import { fadeInUp, staggerContainer } from '@/lib/animations';
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[90vh] overflow-hidden">
+    <section className="relative min-h-[90vh]">
       {/* Background Effects */}
       <GradientMesh variant="primary" />
       <FloatingShapes count={8} />
@@ -43,6 +43,24 @@ export function HeroSection() {
                 </Button>
               </Link>
             </motion.div>
+
+          </motion.div>
+
+          {/* Mobile Expert Image - positioned at section bottom, overlapping next section */}
+          <motion.div
+            className="block lg:hidden absolute bottom-0 left-1/2 -translate-x-1/2 z-20"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <Image
+              src="/images/founders/balogh-monika-szakerto-Szerkesztve.png"
+              alt="Balogh Mónika - szakértő"
+              width={300}
+              height={450}
+              className="mx-auto max-h-[40vh] w-auto object-contain"
+              priority
+            />
           </motion.div>
 
           {/* Expert Image - Balogh Mónika - nagy kép, teteje a szöveg tetejéhez */}
