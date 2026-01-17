@@ -64,11 +64,11 @@ export default function SzervezetiKihivasokPage() {
   return (
     <MainLayout>
       {/* Hero Section */}
-      <section className="relative min-h-[40vh] lg:min-h-[60vh] overflow-hidden">
+      <section className="relative min-h-[32vh] lg:min-h-[60vh] overflow-hidden">
         <GradientMesh variant="subtle" />
 
         <div className="max-w-[var(--max-content-width)] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 min-h-[40vh] lg:min-h-[60vh]">
+          <div className="grid lg:grid-cols-2 gap-12 min-h-[32vh] lg:min-h-[60vh]">
             {/* Expert Image - Kalmár Róbert - kép alja a szekció aljához */}
             <div className="hidden lg:flex items-end justify-center order-2 lg:order-1">
               <div className="relative w-full max-w-lg">
@@ -83,7 +83,7 @@ export default function SzervezetiKihivasokPage() {
             </div>
 
             {/* Text content */}
-            <ScrollReveal className="text-center lg:text-left order-1 lg:order-2 flex flex-col items-center lg:items-start pt-10 pb-4 lg:py-20">
+            <ScrollReveal className="text-center lg:text-left order-1 lg:order-2 flex flex-col items-center lg:items-start pt-6 pb-2 lg:py-20">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
                 <span className="text-[var(--color-text-primary)]">Önnek is ismerősek </span>
                 <span className="text-accent-red">A KÖVETKEZŐ HELYZETEK?</span>
