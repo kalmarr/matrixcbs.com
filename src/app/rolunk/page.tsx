@@ -109,7 +109,7 @@ export default function RolunkPage() {
               </div>
               <div className="flex-1 h-1 mx-8 bg-gradient-to-r from-[var(--color-accent-red)] to-[var(--color-accent-orange)] rounded-full" />
               <div className="text-center">
-                <span className="text-3xl font-bold text-[var(--color-accent-orange)]">2025</span>
+                <span className="text-3xl font-bold text-[var(--color-accent-orange)]">2026</span>
                 <p className="text-sm text-[var(--color-text-muted)] mt-1">26 év tapasztalat</p>
               </div>
             </ScrollReveal>
