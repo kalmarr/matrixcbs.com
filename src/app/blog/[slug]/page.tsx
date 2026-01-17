@@ -8,6 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { prisma } from '@/lib/prisma';
 import { sanitizeHTML } from '@/lib/sanitize-html';
+import { MainLayout } from '@/components/layout/MainLayout';
 
 // Force dynamic rendering - this page needs database access
 export const dynamic = 'force-dynamic';
@@ -146,8 +147,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   });
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg-dark)]">
-      {/* Breadcrumb */}
+    <MainLayout>
+      <div className="min-h-screen bg-[var(--color-bg-dark)]">
+        {/* Breadcrumb */}
       <div className="bg-[var(--color-bg-primary)] border-b border-[var(--color-bg-secondary)]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <nav className="flex items-center gap-2 text-sm text-[var(--color-gray-medium)]">
@@ -355,6 +357,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </Link>
         </div>
       </article>
-    </div>
+      </div>
+    </MainLayout>
   );
 }

@@ -168,3 +168,32 @@ h1, h2, h3, h4, h5, h6 {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   z-index: 9999;
 }
+
+/* Samsung Internet Browser Compatibility */
+/* Fallback for backdrop-filter (not supported in older Samsung Internet) */
+@supports not (backdrop-filter: blur(12px)) {
+  .backdrop-blur-md {
+    background-color: var(--color-bg-dark) !important;
+  }
+}
+
+/* Webkit vendor prefixes for older browsers */
+.backdrop-blur-md {
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* Fallback for Framer Motion animations on older browsers */
+/* Ha az IntersectionObserver nem működik, a tartalom legyen látható */
+@supports not (animation-timeline: view()) {
+  /* Fallback: reduced motion prefers - show content immediately */
+}
+
+/* Samsung Internet specific fix - ensure content is visible */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  /* Force GPU acceleration for animations */
+  [style*="opacity"] {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}

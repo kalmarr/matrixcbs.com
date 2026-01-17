@@ -15,7 +15,7 @@ module.exports = {
     log_date_format: 'YYYY-MM-DD HH:mm:ss',
     env_production: {
       NODE_ENV: 'production',
-      PORT: 3000
+      PORT: 3001
     }
   }]
 };

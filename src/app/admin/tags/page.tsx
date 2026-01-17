@@ -185,7 +185,7 @@ export default function AdminTagsPage() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Keresés címkékben..."
-                  className="pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
 
@@ -229,7 +229,7 @@ export default function AdminTagsPage() {
                     value={newForm.name}
                     onChange={(e) => setNewForm({ ...newForm, name: e.target.value })}
                     placeholder="pl. Webfejlesztés"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     autoFocus
                   />
                 </div>
@@ -242,7 +242,7 @@ export default function AdminTagsPage() {
                     value={newForm.slug}
                     onChange={(e) => setNewForm({ ...newForm, slug: e.target.value })}
                     placeholder="Automatikus, ha üresen hagyod"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -322,7 +322,7 @@ export default function AdminTagsPage() {
                               onChange={(e) =>
                                 setEditForm({ ...editForm, name: e.target.value })
                               }
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                               autoFocus
                             />
                           </td>
@@ -333,7 +333,7 @@ export default function AdminTagsPage() {
                               onChange={(e) =>
                                 setEditForm({ ...editForm, slug: e.target.value })
                               }
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                             />
                           </td>
                           <td className="px-6 py-4">

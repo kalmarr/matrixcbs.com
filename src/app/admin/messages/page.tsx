@@ -286,7 +286,7 @@ export default function AdminMessagesPage() {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Keresés név vagy email alapján..."
-                className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
               {searchInput && (
                 <button
@@ -428,7 +428,7 @@ export default function AdminMessagesPage() {
                         {expandedMessage.ipAddress && (
                           <div className="flex items-center gap-2 text-gray-600">
                             <MapPin className="w-4 h-4 text-gray-400" />
-                            <span className="font-medium">IP:</span>
+                            <span className="font-medium text-gray-700">IP:</span>
                             <span>{expandedMessage.ipAddress}</span>
                           </div>
                         )}
@@ -436,7 +436,7 @@ export default function AdminMessagesPage() {
                           <div className="flex items-start gap-2 text-gray-600">
                             <Monitor className="w-4 h-4 text-gray-400 mt-0.5" />
                             <div>
-                              <span className="font-medium">Böngésző:</span>
+                              <span className="font-medium text-gray-700">Böngésző:</span>
                               <p className="text-xs text-gray-500 mt-1 break-all">
                                 {expandedMessage.userAgent}
                               </p>

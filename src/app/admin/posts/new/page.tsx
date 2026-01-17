@@ -8,9 +8,10 @@ import { useRouter } from 'next/navigation'
 import PostEditor from '@/components/admin/PostEditor'
 import TagInput from '@/components/admin/TagInput'
 import AutosaveIndicator from '@/components/admin/AutosaveIndicator'
+import MediaPicker from '@/components/admin/MediaPicker'
 import { useAutosave } from '@/hooks/useAutosave'
 import { useBeforeUnload } from '@/hooks/useBeforeUnload'
-import { ArrowLeft, Save, Calendar, Eye, FileText } from 'lucide-react'
+import { ArrowLeft, Save, Calendar, Eye, FileText, Image as ImageIcon, X } from 'lucide-react'
 
 interface Category {
   id: number
@@ -46,6 +47,7 @@ export default function NewPostPage() {
   const [metaDescription, setMetaDescription] = useState('')
   const [status, setStatus] = useState<PostStatus>('DRAFT')
   const [scheduledAt, setScheduledAt] = useState('')
+  const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false)
 
   // Autosave hook
   const { isSaving, lastSaved, isDirty, clearDraft } = useAutosave({
@@ -209,7 +211,7 @@ export default function NewPostPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Alapadatok kártya */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 text-gray-900">
               <FileText className="w-5 h-5 text-orange-500" />
               Alapadatok
             </h2>
@@ -225,7 +227,7 @@ export default function NewPostPage() {
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   placeholder="Add meg a poszt címét..."
                   required
                 />
@@ -244,7 +246,7 @@ export default function NewPostPage() {
                     setSlug(e.target.value)
                     setSlugManuallyEdited(true)
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent font-mono text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent font-mono text-sm"
                   placeholder="automatikusan-generalva-a-cimbol"
                   required
                 />
@@ -263,7 +265,7 @@ export default function NewPostPage() {
                   value={excerpt}
                   onChange={(e) => setExcerpt(e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
                   placeholder="Rövid leírás a posztról (megjelenik a listákban és kereső találatoknál)..."
                   required
                 />
@@ -274,36 +276,62 @@ export default function NewPostPage() {
 
               {/* Kiemelt kép */}
               <div>
-                <label htmlFor="featuredImage" className="block text-sm font-medium text-gray-700 mb-1">
-                  Kiemelt kép URL
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Kiemelt kép
                 </label>
-                <input
-                  type="url"
-                  id="featuredImage"
-                  value={featuredImage}
-                  onChange={(e) => setFeaturedImage(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  placeholder="https://example.com/image.jpg"
-                />
-                {featuredImage && (
-                  <div className="mt-2">
+                {featuredImage ? (
+                  <div className="relative inline-block">
                     <img
                       src={featuredImage}
-                      alt="Előnézet"
+                      alt="Kiemelt kép"
                       className="max-w-xs rounded-lg border border-gray-200"
                       onError={(e) => {
                         e.currentTarget.style.display = 'none'
                       }}
                     />
+                    <button
+                      type="button"
+                      onClick={() => setFeaturedImage('')}
+                      className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsMediaPickerOpen(true)}
+                      className="absolute bottom-2 right-2 px-3 py-1 bg-white/90 text-gray-700 text-sm rounded-lg hover:bg-white transition border border-gray-300"
+                    >
+                      Csere
+                    </button>
                   </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setIsMediaPickerOpen(true)}
+                    className="flex items-center gap-2 px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition w-full justify-center text-gray-500 hover:text-orange-600"
+                  >
+                    <ImageIcon className="w-6 h-6" />
+                    <span>Kép kiválasztása a médiatárból</span>
+                  </button>
                 )}
+                <p className="mt-2 text-xs text-gray-500">
+                  Vagy adj meg URL-t közvetlenül:
+                </p>
+                <input
+                  type="url"
+                  id="featuredImage"
+                  value={featuredImage}
+                  onChange={(e) => setFeaturedImage(e.target.value)}
+                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                  placeholder="https://example.com/image.jpg"
+                />
               </div>
             </div>
           </div>
 
           {/* Tartalom szerkesztő */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold mb-4">
+            <h2 className="text-xl font-semibold mb-4 text-gray-900">
               Tartalom <span className="text-red-500">*</span>
             </h2>
             <PostEditor content={content} onChange={setContent} />
@@ -311,7 +339,7 @@ export default function NewPostPage() {
 
           {/* Kategóriák és címkék */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold mb-4">Kategóriák és Címkék</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-900">Kategóriák és Címkék</h2>
 
             <div className="space-y-4">
               {/* Kategóriák */}
@@ -343,7 +371,7 @@ export default function NewPostPage() {
                           onChange={() => toggleCategory(category.id)}
                           className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
                         />
-                        <span className="text-sm font-medium">{category.name}</span>
+                        <span className="text-sm font-medium text-gray-700">{category.name}</span>
                       </label>
                     ))}
                   </div>
@@ -365,7 +393,7 @@ export default function NewPostPage() {
 
           {/* SEO beállítások */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 text-gray-900">
               <Eye className="w-5 h-5 text-orange-500" />
               SEO Beállítások
             </h2>
@@ -381,7 +409,7 @@ export default function NewPostPage() {
                   id="metaTitle"
                   value={metaTitle}
                   onChange={(e) => setMetaTitle(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   placeholder="Ha üres, az alap cím kerül használatra"
                   maxLength={60}
                 />
@@ -400,7 +428,7 @@ export default function NewPostPage() {
                   value={metaDescription}
                   onChange={(e) => setMetaDescription(e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
                   placeholder="Ha üres, a kivonat kerül használatra"
                   maxLength={160}
                 />
@@ -429,7 +457,7 @@ export default function NewPostPage() {
 
           {/* Publikálási beállítások */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 text-gray-900">
               <Calendar className="w-5 h-5 text-orange-500" />
               Publikálás
             </h2>
@@ -456,7 +484,7 @@ export default function NewPostPage() {
                       onChange={(e) => setStatus(e.target.value as PostStatus)}
                       className="w-4 h-4 text-orange-500"
                     />
-                    <span className="font-medium">Piszkozat</span>
+                    <span className="font-medium text-gray-700">Piszkozat</span>
                   </label>
 
                   <label
@@ -474,7 +502,7 @@ export default function NewPostPage() {
                       onChange={(e) => setStatus(e.target.value as PostStatus)}
                       className="w-4 h-4 text-orange-500"
                     />
-                    <span className="font-medium">Ütemezett</span>
+                    <span className="font-medium text-gray-700">Ütemezett</span>
                   </label>
 
                   <label
@@ -492,7 +520,7 @@ export default function NewPostPage() {
                       onChange={(e) => setStatus(e.target.value as PostStatus)}
                       className="w-4 h-4 text-orange-500"
                     />
-                    <span className="font-medium">Publikálva</span>
+                    <span className="font-medium text-gray-700">Publikálva</span>
                   </label>
                 </div>
               </div>
@@ -508,7 +536,7 @@ export default function NewPostPage() {
                     id="scheduledAt"
                     value={scheduledAt}
                     onChange={(e) => setScheduledAt(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     required={status === 'SCHEDULED'}
                   />
                   <p className="mt-1 text-xs text-gray-500">
@@ -524,7 +552,7 @@ export default function NewPostPage() {
             <button
               type="button"
               onClick={() => router.push('/admin/posts')}
-              className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
               disabled={loading}
             >
               Mégse
@@ -552,6 +580,17 @@ export default function NewPostPage() {
 
         {/* Autosave indikátor */}
         <AutosaveIndicator isSaving={isSaving} lastSaved={lastSaved} isDirty={isDirty} />
+
+        {/* Media Picker Modal */}
+        <MediaPicker
+          isOpen={isMediaPickerOpen}
+          onClose={() => setIsMediaPickerOpen(false)}
+          onSelect={(media) => {
+            setFeaturedImage(media.path)
+            setIsMediaPickerOpen(false)
+          }}
+          mimeType="image"
+        />
       </div>
     </div>
   )

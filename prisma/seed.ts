@@ -12,34 +12,42 @@ async function main() {
   // ============================================
   // ADMIN FELHASZNÁLÓK
   // ============================================
-  const adminPassword = await hash('Admin123!', 12)
+  // Specifikus jelszavak hash-elése
+  const kalmarrPassword = await hash('rr3R^tZsxPGZ2F$iniTT1mKE#', 12)
+  const baloghPassword = await hash('MatrixCBS2024!', 12) // Alapértelmezett jelszó, változtatható
 
   const admins = [
     {
       email: 'kalmarr@gmail.com',
-      name: 'Kalmár Roland',
+      name: 'Kalmár Róbert',
       role: AdminRole.SUPER_ADMIN,
+      passwordHash: kalmarrPassword,
     },
     {
       email: 'balogh.monek@gmail.com',
       name: 'Balogh Mónika',
       role: AdminRole.ADMIN,
+      passwordHash: baloghPassword,
     },
   ]
 
   for (const adminData of admins) {
     const admin = await prisma.admin.upsert({
       where: { email: adminData.email },
-      update: {},
+      update: {
+        passwordHash: adminData.passwordHash,
+        name: adminData.name,
+        role: adminData.role,
+      },
       create: {
         email: adminData.email,
-        passwordHash: adminPassword,
+        passwordHash: adminData.passwordHash,
         name: adminData.name,
         role: adminData.role,
         isActive: true,
       },
     })
-    console.log('Admin user created:', admin.email)
+    console.log('Admin user created/updated:', admin.email)
   }
 
   // ============================================

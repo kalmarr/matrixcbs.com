@@ -9,6 +9,7 @@ import Link from 'next/link'
 import PostEditor from '@/components/admin/PostEditor'
 import TagInput from '@/components/admin/TagInput'
 import AutosaveIndicator from '@/components/admin/AutosaveIndicator'
+import MediaPicker from '@/components/admin/MediaPicker'
 import { useAutosave } from '@/hooks/useAutosave'
 import { useBeforeUnload } from '@/hooks/useBeforeUnload'
 import {
@@ -24,7 +25,8 @@ import {
   Tag as TagIcon,
   FolderOpen,
   History,
-  AlertCircle
+  AlertCircle,
+  X
 } from 'lucide-react'
 
 interface Category {
@@ -91,6 +93,7 @@ export default function EditPostPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [createVersion, setCreateVersion] = useState(false)
   const [changeNote, setChangeNote] = useState('')
+  const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false)
 
   const [formData, setFormData] = useState<FormData>({
     title: '',
@@ -374,7 +377,7 @@ export default function EditPostPage() {
                 type="text"
                 value={formData.title}
                 onChange={(e) => handleTitleChange(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="Poszt címe"
               />
             </div>
@@ -388,7 +391,7 @@ export default function EditPostPage() {
                 type="text"
                 value={formData.slug}
                 onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent font-mono text-sm"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent font-mono text-sm"
                 placeholder="poszt-slug"
               />
               <p className="text-xs text-gray-500 mt-1">
@@ -406,7 +409,7 @@ export default function EditPostPage() {
               value={formData.excerpt}
               onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
               rows={3}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
               placeholder="Rövid kivonat a posztról..."
             />
             <p className="text-xs text-gray-500 mt-1">
@@ -440,7 +443,7 @@ export default function EditPostPage() {
                 type="text"
                 value={formData.seoTitle}
                 onChange={(e) => setFormData({ ...formData, seoTitle: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="Ha üres, a poszt címe lesz használva"
                 maxLength={60}
               />
@@ -459,7 +462,7 @@ export default function EditPostPage() {
                   setFormData({ ...formData, seoDescription: e.target.value })
                 }
                 rows={3}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
                 placeholder="Meta description a keresőknek"
                 maxLength={160}
               />
@@ -478,7 +481,7 @@ export default function EditPostPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, seoKeywords: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="kulcsszó1, kulcsszó2, kulcsszó3"
               />
               <p className="text-xs text-gray-500 mt-1">
@@ -506,7 +509,7 @@ export default function EditPostPage() {
                     status: e.target.value as FormData['status']
                   })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               >
                 <option value="DRAFT">Piszkozat</option>
                 <option value="SCHEDULED">Ütemezett</option>
@@ -527,7 +530,7 @@ export default function EditPostPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, scheduledAt: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
             )}
@@ -549,7 +552,7 @@ export default function EditPostPage() {
                   value={changeNote}
                   onChange={(e) => setChangeNote(e.target.value)}
                   rows={2}
-                  className="w-full mt-2 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                  className="w-full mt-2 px-3 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
                   placeholder="Változtatás megjegyzése (opcionális)"
                 />
               )}
@@ -601,26 +604,42 @@ export default function EditPostPage() {
               <ImageIcon className="w-5 h-5" />
               Kiemelt kép
             </h3>
-            <input
-              type="url"
-              value={formData.featuredImage}
-              onChange={(e) =>
-                setFormData({ ...formData, featuredImage: e.target.value })
-              }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              placeholder="https://example.com/image.jpg"
-            />
-            {formData.featuredImage && (
-              <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
+            {formData.featuredImage ? (
+              <div className="relative rounded-lg overflow-hidden border border-gray-200">
                 <img
-                  src={formData.featuredImage}
-                  alt="Előnézet"
-                  className="w-full h-full object-cover"
+                  src={formData.featuredImage.startsWith('/') ? formData.featuredImage : `/${formData.featuredImage}`}
+                  alt="Kiemelt kép"
+                  className="w-full aspect-video object-cover"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none'
                   }}
                 />
+                <div className="absolute top-2 right-2 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsMediaPickerOpen(true)}
+                    className="px-3 py-1 bg-white/90 text-gray-700 text-sm rounded-lg hover:bg-white transition-colors shadow-sm"
+                  >
+                    Csere
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, featuredImage: '' })}
+                    className="p-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-sm"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsMediaPickerOpen(true)}
+                className="w-full flex flex-col items-center gap-2 px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors text-gray-500 hover:text-orange-600"
+              >
+                <ImageIcon className="w-8 h-8" />
+                <span className="text-sm font-medium">Kép kiválasztása a médiatárból</span>
+              </button>
             )}
           </div>
 
@@ -679,6 +698,17 @@ export default function EditPostPage() {
         {/* Autosave indikátor */}
         <AutosaveIndicator isSaving={isSavingDraft} lastSaved={lastSaved} isDirty={isDirty} />
       </div>
+
+      {/* MediaPicker Modal */}
+      <MediaPicker
+        isOpen={isMediaPickerOpen}
+        onClose={() => setIsMediaPickerOpen(false)}
+        onSelect={(media) => {
+          setFormData({ ...formData, featuredImage: media.path })
+          setIsMediaPickerOpen(false)
+        }}
+        mimeType="image"
+      />
     </div>
   )
 }

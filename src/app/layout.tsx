@@ -1,8 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import { WebVitals } from "@/components/WebVitals";
-import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
+// ClientAnalytics disabled during build - enable after fixing Next.js 16 bug
+// import { ClientAnalytics } from "@/components/ClientAnalytics";
+
+// Force dynamic rendering for all pages
+export const dynamic = 'force-dynamic';
 
 // Display font for headings
 const outfit = Outfit({
@@ -128,8 +131,7 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} ${plusJakarta.variable} antialiased bg-[var(--color-bg-dark)] text-[var(--color-text-primary)] matrix-grid grain-overlay`}
       >
-        <GoogleAnalytics />
-        <WebVitals />
+        {/* <ClientAnalytics /> */}
         {children}
       </body>
     </html>

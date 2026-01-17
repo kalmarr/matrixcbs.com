@@ -1,11 +1,12 @@
 'use client'
 
-// MATRIX CBS - Admin Layout
+// MATRIX CBS - Admin Layout with Authentication
 // Sidebar navigációval és header-rel
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { SessionProvider, useSession, signOut } from 'next-auth/react'
+import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
   FileText,
@@ -21,7 +22,9 @@ import {
   ChevronDown,
   LogOut,
   User,
-  Activity
+  Activity,
+  Users,
+  Loader2
 } from 'lucide-react'
 
 interface NavItem {
@@ -40,13 +43,60 @@ const navigation: NavItem[] = [
   { name: 'Referenciák', href: '/admin/references', icon: Star },
   { name: 'GYIK', href: '/admin/faqs', icon: HelpCircle },
   { name: 'Teljesítmény', href: '/admin/web-vitals', icon: Activity },
+  { name: 'Felhasználók', href: '/admin/settings/users', icon: Users },
   { name: 'Beállítások', href: '/admin/settings', icon: Settings }
 ]
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+// Inner component that uses session
+function AdminLayoutContent({ children }: { children: React.ReactNode }) {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+  const pathname = usePathname()
+
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
-  const pathname = usePathname()
+
+  // Skip auth check for login page (handle both with and without trailing slash)
+  const isLoginPage = pathname === '/admin/login' || pathname === '/admin/login/'
+
+  useEffect(() => {
+    if (!isLoginPage && status === 'unauthenticated') {
+      router.push(`/admin/login?callbackUrl=${encodeURIComponent(pathname)}`)
+    }
+  }, [status, isLoginPage, router, pathname])
+
+  // Show loading while checking auth
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 text-orange-500 animate-spin mx-auto mb-4" />
+          <p className="text-gray-400">Betöltés...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show login page without layout
+  if (isLoginPage) {
+    return <>{children}</>
+  }
+
+  // Redirect if not authenticated
+  if (status === 'unauthenticated') {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 text-orange-500 animate-spin mx-auto mb-4" />
+          <p className="text-gray-400">Átirányítás...</p>
+        </div>
+      </div>
+    )
+  }
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/admin/login' })
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -81,11 +131,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-1">
+        <nav className="p-4 space-y-1 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 140px)' }}>
           {navigation.map((item) => {
+            // Check if there's a more specific route that matches
+            const hasMoreSpecificMatch = navigation.some(
+              (other) =>
+                other.href !== item.href &&
+                other.href.startsWith(item.href) &&
+                pathname.startsWith(other.href)
+            )
             const isActive =
               pathname === item.href ||
-              (item.href !== '/admin' && pathname.startsWith(item.href))
+              (item.href !== '/admin' && pathname.startsWith(item.href) && !hasMoreSpecificMatch)
 
             return (
               <Link
@@ -142,7 +199,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <User className="w-4 h-4 text-orange-600" />
               </div>
               <span className="hidden sm:block text-sm font-medium text-gray-700">
-                Admin
+                {session?.user?.name || session?.user?.email || 'Admin'}
               </span>
               <ChevronDown className="w-4 h-4 text-gray-400" />
             </button>
@@ -155,8 +212,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 />
                 <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
                   <div className="px-4 py-3 border-b border-gray-100">
-                    <p className="text-sm font-medium text-gray-900">Admin</p>
-                    <p className="text-xs text-gray-500">admin@matrixcbs.com</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {session?.user?.name || 'Admin'}
+                    </p>
+                    <p className="text-xs text-gray-500">{session?.user?.email}</p>
                   </div>
                   <div className="py-1">
                     <Link
@@ -167,10 +226,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       Beállítások
                     </Link>
                     <button
-                      onClick={() => {
-                        // TODO: Kijelentkezés implementálása
-                        setUserMenuOpen(false)
-                      }}
+                      onClick={handleSignOut}
                       className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                     >
                       Kijelentkezés
@@ -186,5 +242,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <main className="p-4 lg:p-6">{children}</main>
       </div>
     </div>
+  )
+}
+
+// Outer component that provides SessionProvider
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <SessionProvider>
+      <AdminLayoutContent>{children}</AdminLayoutContent>
+    </SessionProvider>
   )
 }

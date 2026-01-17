@@ -113,7 +113,7 @@ export default function SchedulePicker({ value, onChange }: SchedulePickerProps)
             value={dateValue}
             onChange={handleDateChange}
             min={getMinDate()}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
           />
         </div>
 
@@ -128,7 +128,7 @@ export default function SchedulePicker({ value, onChange }: SchedulePickerProps)
             value={timeValue}
             onChange={handleTimeChange}
             disabled={!dateValue}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
           />
         </div>
       </div>

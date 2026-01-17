@@ -73,8 +73,8 @@ export function Header() {
                 alt="MATRIX CBS Kft."
                 width={40}
                 height={40}
-                className="block sm:hidden h-10"
-                style={{ width: 'auto' }}
+                className="block sm:hidden"
+                style={{ height: '40px', width: 'auto' }}
                 priority
               />
               {/* Desktop: Full logo */}
@@ -83,8 +83,8 @@ export function Header() {
                 alt="MATRIX CBS Kft."
                 width={180}
                 height={35}
-                className="hidden sm:block h-10"
-                style={{ width: 'auto' }}
+                className="hidden sm:block"
+                style={{ height: '40px', width: 'auto' }}
                 priority
               />
             </Link>

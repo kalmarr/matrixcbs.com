@@ -124,7 +124,7 @@ export default function ReferenceForm({
               id="companyName"
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               placeholder="Pl. ABC Kft."
               required
             />
@@ -141,7 +141,7 @@ export default function ReferenceForm({
                 id="contactName"
                 value={contactName}
                 onChange={(e) => setContactName(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="Pl. Kovács János"
               />
             </div>
@@ -154,7 +154,7 @@ export default function ReferenceForm({
                 id="contactRole"
                 value={contactRole}
                 onChange={(e) => setContactRole(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="Pl. Ügyvezető igazgató"
               />
             </div>
@@ -170,7 +170,7 @@ export default function ReferenceForm({
               id="websiteUrl"
               value={websiteUrl}
               onChange={(e) => setWebsiteUrl(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               placeholder="https://example.com"
             />
           </div>
@@ -209,7 +209,7 @@ export default function ReferenceForm({
               <button
                 type="button"
                 onClick={() => setShowMediaPicker(true)}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
               >
                 {logoPath ? 'Logo cseréje' : 'Logo kiválasztása'}
               </button>
@@ -252,7 +252,7 @@ export default function ReferenceForm({
                 value={sortOrder}
                 onChange={(e) => setSortOrder(parseInt(e.target.value) || 0)}
                 min={0}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
               <p className="text-xs text-gray-500 mt-1">
                 Kisebb szám = előrébb jelenik meg
@@ -295,7 +295,7 @@ export default function ReferenceForm({
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+            className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
             disabled={loading}
           >
             Mégse

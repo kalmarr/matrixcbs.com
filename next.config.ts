@@ -1,20 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Server-based deployment (removed output: 'export' for API routes)
-  // If you need static export, you'll need to separate the static site from the API
-
-  // Disable ESLint during build (fix errors later)
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-
   // Disable TypeScript errors during build
   typescript: {
     ignoreBuildErrors: true,
   },
 
   trailingSlash: true,
+
+  // Use standalone output for production deployments
+  output: 'standalone',
 
   // Disable X-Powered-By header
   poweredByHeader: false,

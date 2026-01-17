@@ -90,21 +90,35 @@ export default async function ReferenciakPage() {
       </section>
 
       {/* CTA szekció */}
-      <section className="py-16 bg-gradient-to-r from-orange-500 to-orange-600 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Szeretne Ön is partnereink közé tartozni?
-          </h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Vegye fel velünk a kapcsolatot, és beszéljük meg, hogyan
-            segíthetünk szervezete fejlődésében!
-          </p>
-          <a
-            href="/kapcsolat"
-            className="inline-block bg-white text-orange-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg"
-          >
-            Kapcsolatfelvétel
-          </a>
+      <section className="py-16 px-4">
+        <div className="max-w-[var(--max-content-width)] mx-auto">
+          <div className="text-center py-16 px-8 lg:py-20 lg:px-16 rounded-[var(--radius-lg)] bg-gradient-to-br from-[var(--color-accent-red)] to-[var(--color-accent-orange)] shadow-[var(--shadow-lg)]">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
+              Szeretne Ön is partnereink közé tartozni?
+            </h2>
+            <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+              Vegye fel velünk a kapcsolatot, és beszéljük meg, hogyan
+              segíthetünk szervezete fejlődésében!
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a href="/kapcsolat/">
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center gap-2 font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent-orange)] focus-visible:ring-offset-2 px-8 py-4 text-lg rounded-[var(--radius-md)] bg-white text-[var(--color-accent-red)] hover:bg-white/90"
+                >
+                  Kapcsolatfelvétel
+                </button>
+              </a>
+              <a href="tel:+36703272146">
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center gap-2 font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent-orange)] focus-visible:ring-offset-2 bg-transparent border-2 hover:text-white px-8 py-4 text-lg rounded-[var(--radius-md)] border-white text-white hover:bg-white/10"
+                >
+                  +36 70 327 2146
+                </button>
+              </a>
+            </div>
+          </div>
         </div>
       </section>
     </MainLayout>

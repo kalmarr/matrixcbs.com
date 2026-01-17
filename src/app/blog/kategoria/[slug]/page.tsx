@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import PostCard from '@/components/blog/PostCard';
+import { MainLayout } from '@/components/layout/MainLayout';
 
 // Force dynamic rendering - this page needs database access
 export const dynamic = 'force-dynamic';
@@ -171,8 +172,9 @@ export default async function CategoryPage({
     await getCategoryData(slug, currentPage);
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg-dark)]">
-      {/* Header */}
+    <MainLayout>
+      <div className="min-h-screen bg-[var(--color-bg-dark)]">
+        {/* Header */}
       <div className="bg-gradient-to-br from-[var(--color-bg-primary)] to-[var(--color-bg-dark)] border-b border-[var(--color-bg-secondary)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
           {/* Breadcrumb */}
@@ -497,7 +499,8 @@ export default async function CategoryPage({
             )}
           </main>
         </div>
+        </div>
       </div>
-    </div>
+    </MainLayout>
   );
 }

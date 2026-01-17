@@ -4,7 +4,7 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import Image from '@tiptap/extension-image'
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useMemo } from 'react'
 import {
   Bold,
   Italic,
@@ -15,8 +15,12 @@ import {
   ListOrdered,
   Link as LinkIcon,
   Image as ImageIcon,
-  Unlink
+  Unlink,
+  AlignLeft,
+  AlignCenter,
+  AlignRight
 } from 'lucide-react'
+import TextAlign from '@tiptap/extension-text-align'
 import DOMPurify from 'isomorphic-dompurify'
 
 interface RichTextEditorProps {
@@ -75,26 +79,31 @@ export default function RichTextEditor({
   const [showLinkInput, setShowLinkInput] = useState(false)
   const [linkUrl, setLinkUrl] = useState('')
 
+  const extensions = useMemo(() => [
+    StarterKit.configure({
+      heading: {
+        levels: [1, 2, 3]
+      }
+    }),
+    Link.configure({
+      openOnClick: false,
+      HTMLAttributes: {
+        class: 'text-orange-600 underline hover:text-orange-700'
+      }
+    }),
+    Image.configure({
+      HTMLAttributes: {
+        class: 'max-w-full h-auto rounded-lg my-4'
+      }
+    }),
+    TextAlign.configure({
+      types: ['heading', 'paragraph', 'image']
+    })
+  ], [])
+
   const editor = useEditor({
     immediatelyRender: false,
-    extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3]
-        }
-      }),
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: 'text-orange-600 underline hover:text-orange-700'
-        }
-      }),
-      Image.configure({
-        HTMLAttributes: {
-          class: 'max-w-full h-auto rounded-lg my-4'
-        }
-      })
-    ],
+    extensions,
     content,
     editorProps: {
       attributes: {
@@ -110,7 +119,7 @@ export default function RichTextEditor({
           'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3',
           'ul', 'ol', 'li', 'a', 'img', 'blockquote'
         ],
-        ALLOWED_ATTR: ['href', 'target', 'rel', 'src', 'alt', 'class']
+        ALLOWED_ATTR: ['href', 'target', 'rel', 'src', 'alt', 'class', 'style']
       })
       onChange(sanitizedHtml)
     }
@@ -219,6 +228,31 @@ export default function RichTextEditor({
           title="Számozás"
         >
           <ListOrdered className="w-4 h-4" />
+        </ToolbarButton>
+
+        <ToolbarDivider />
+
+        {/* Text Alignment */}
+        <ToolbarButton
+          onClick={() => editor.chain().focus().setTextAlign('left').run()}
+          isActive={editor.isActive({ textAlign: 'left' })}
+          title="Balra igazítás"
+        >
+          <AlignLeft className="w-4 h-4" />
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => editor.chain().focus().setTextAlign('center').run()}
+          isActive={editor.isActive({ textAlign: 'center' })}
+          title="Középre igazítás"
+        >
+          <AlignCenter className="w-4 h-4" />
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => editor.chain().focus().setTextAlign('right').run()}
+          isActive={editor.isActive({ textAlign: 'right' })}
+          title="Jobbra igazítás"
+        >
+          <AlignRight className="w-4 h-4" />
         </ToolbarButton>
 
         <ToolbarDivider />

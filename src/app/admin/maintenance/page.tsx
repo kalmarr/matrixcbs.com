@@ -292,7 +292,7 @@ export default function MaintenanceAdminPage() {
                 onChange={(e) => setMessage(e.target.value)}
                 rows={4}
                 placeholder="Karbantartás miatt ideiglenesen nem elérhető az oldal. Hamarosan visszatérünk!"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
               />
               <p className="mt-1 text-xs text-gray-500">
                 Ha üresen hagyod, az alapértelmezett üzenet jelenik meg.
@@ -309,7 +309,7 @@ export default function MaintenanceAdminPage() {
                 onChange={(e) => setAllowedIpsText(e.target.value)}
                 rows={6}
                 placeholder="127.0.0.1&#10;192.168.1.100&#10;10.0.0.5"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 font-mono text-sm"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 font-mono text-sm"
               />
               <p className="mt-1 text-xs text-gray-500">
                 Ezek az IP címek hozzáférhetnek az oldalhoz karbantartási mód alatt is.
@@ -325,7 +325,7 @@ export default function MaintenanceAdminPage() {
                 type="datetime-local"
                 value={endsAt}
                 onChange={(e) => setEndsAt(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
               />
               <p className="mt-1 text-xs text-gray-500">
                 Ez az időpont megjelenik a karbantartási oldalon.

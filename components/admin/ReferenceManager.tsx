@@ -254,7 +254,7 @@ export default function ReferenceManager() {
                 type="text"
                 value={formData.companyName}
                 onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="Cég neve"
               />
             </div>
@@ -266,7 +266,7 @@ export default function ReferenceManager() {
                 type="url"
                 value={formData.websiteUrl}
                 onChange={(e) => setFormData({ ...formData, websiteUrl: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="https://example.com"
               />
             </div>
@@ -278,7 +278,7 @@ export default function ReferenceManager() {
                 type="text"
                 value={formData.contactName}
                 onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="Kovács János"
               />
             </div>
@@ -290,7 +290,7 @@ export default function ReferenceManager() {
                 type="text"
                 value={formData.contactRole}
                 onChange={(e) => setFormData({ ...formData, contactRole: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="Ügyvezető igazgató"
               />
             </div>
@@ -302,7 +302,7 @@ export default function ReferenceManager() {
                 value={formData.testimonial}
                 onChange={(e) => setFormData({ ...formData, testimonial: e.target.value })}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="Az ügyfél véleménye a szolgáltatásról..."
               />
             </div>
@@ -314,7 +314,7 @@ export default function ReferenceManager() {
                 type="text"
                 value={formData.logoPath}
                 onChange={(e) => setFormData({ ...formData, logoPath: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="/images/logos/company.png"
               />
             </div>
@@ -326,7 +326,7 @@ export default function ReferenceManager() {
                 type="number"
                 value={formData.sortOrder}
                 onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="0"
               />
             </div>

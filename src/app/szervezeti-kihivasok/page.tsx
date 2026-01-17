@@ -78,6 +78,7 @@ export default function SzervezetiKihivasokPage() {
                   width={600}
                   height={400}
                   className="w-full h-auto"
+                  priority
                 />
               </div>
             </div>
@@ -98,6 +99,8 @@ export default function SzervezetiKihivasokPage() {
                 width={450}
                 height={300}
                 className="max-w-sm w-full h-auto"
+                loading="eager"
+                priority
               />
             </div>
           </div>

@@ -2,11 +2,23 @@
 // POST: Change admin password
 
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { auth } from '@/lib/auth'
+import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+
+const prisma = new PrismaClient()
 
 export async function POST(request: NextRequest) {
   try {
+    // Get current user from session
+    const session = await auth()
+    if (!session?.user?.email) {
+      return NextResponse.json(
+        { error: 'Nem vagy bejelentkezve' },
+        { status: 401 }
+      )
+    }
+
     const body = await request.json()
     const { currentPassword, newPassword } = body
 
@@ -25,14 +37,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get the first admin (in a real app, use session to identify user)
-    const admin = await prisma.admin.findFirst({
-      where: { isActive: true }
+    // Get the current user
+    const admin = await prisma.admin.findUnique({
+      where: { email: session.user.email }
     })
 
     if (!admin) {
       return NextResponse.json(
-        { error: 'Nem található admin felhasználó' },
+        { error: 'Nem található a felhasználó' },
         { status: 404 }
       )
     }
@@ -53,8 +65,7 @@ export async function POST(request: NextRequest) {
     await prisma.admin.update({
       where: { id: admin.id },
       data: {
-        passwordHash: newPasswordHash,
-        updatedAt: new Date()
+        passwordHash: newPasswordHash
       }
     })
 

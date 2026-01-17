@@ -33,9 +33,9 @@ export function MatrixSolutionSection() {
           {/* Three pillars */}
           <motion.div
             variants={fadeInUp}
-            className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8"
+            className="flex flex-col items-center justify-center gap-4 md:gap-8"
           >
-            <div className="flex items-center gap-4 md:gap-8">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
               <div className="text-center px-6 py-4 rounded-xl bg-[var(--color-bg-primary)] border border-[var(--color-border)]">
                 <p className="text-lg font-semibold text-[var(--color-text-primary)]">Átláthatóbb működés</p>
               </div>

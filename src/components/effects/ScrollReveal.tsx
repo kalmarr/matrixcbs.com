@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, type ReactNode } from 'react';
+import { useRef, useEffect, useState, type ReactNode } from 'react';
 import { motion, useInView, type Variants } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
@@ -66,6 +66,16 @@ export function ScrollReveal({
     margin,
   });
 
+  // Fallback: Ha az IntersectionObserver nem működik (pl. Samsung),
+  // 1 másodperc után mindenképp megjelenítjük a tartalmat
+  const [fallbackVisible, setFallbackVisible] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFallbackVisible(true);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const variants = animationVariants[animation];
 
   // Apply custom delay and duration
@@ -83,12 +93,15 @@ export function ScrollReveal({
     },
   };
 
+  // Ha isInView VAGY fallbackVisible, akkor megjelenítjük
+  const shouldShow = isInView || fallbackVisible;
+
   return (
     <motion.div
       ref={ref}
       className={cn(className)}
       initial="hidden"
-      animate={isInView ? 'visible' : 'hidden'}
+      animate={shouldShow ? 'visible' : 'hidden'}
       variants={customVariants}
     >
       {children}
@@ -119,12 +132,25 @@ export function StaggerContainer({
     margin: '-50px',
   });
 
+  // Fallback: Ha az IntersectionObserver nem működik (pl. Samsung),
+  // 1 másodperc után mindenképp megjelenítjük a tartalmat
+  const [fallbackVisible, setFallbackVisible] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFallbackVisible(true);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Ha isInView VAGY fallbackVisible, akkor megjelenítjük
+  const shouldShow = isInView || fallbackVisible;
+
   return (
     <motion.div
       ref={ref}
       className={cn(className)}
       initial="hidden"
-      animate={isInView ? 'visible' : 'hidden'}
+      animate={shouldShow ? 'visible' : 'hidden'}
       variants={{
         hidden: { opacity: 0 },
         visible: {

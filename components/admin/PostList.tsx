@@ -143,7 +143,7 @@ export default function PostList() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Keresés..."
-                className="pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
             </form>
 
@@ -156,7 +156,7 @@ export default function PostList() {
                   setStatusFilter(e.target.value)
                   setPage(1)
                 }}
-                className="pl-9 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent appearance-none bg-white"
+                className="pl-9 pr-8 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent appearance-none bg-white"
               >
                 <option value="">Minden státusz</option>
                 <option value="DRAFT">Piszkozat</option>

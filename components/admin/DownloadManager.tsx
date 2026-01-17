@@ -255,7 +255,7 @@ export default function DownloadManager() {
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="Dokumentum címe"
               />
             </div>
@@ -267,7 +267,7 @@ export default function DownloadManager() {
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="Rövid leírás a dokumentumról"
                 rows={3}
               />
@@ -280,7 +280,7 @@ export default function DownloadManager() {
               <input
                 type="file"
                 onChange={handleFileChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
               {formData.fileName && (
                 <p className="mt-1 text-sm text-gray-600">
@@ -298,7 +298,7 @@ export default function DownloadManager() {
                   type="text"
                   value={formData.filePath}
                   onChange={(e) => setFormData({ ...formData, filePath: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   placeholder="/downloads/file.pdf"
                 />
               </div>
@@ -311,7 +311,7 @@ export default function DownloadManager() {
                   type="text"
                   value={formData.fileName}
                   onChange={(e) => setFormData({ ...formData, fileName: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   placeholder="dokumentum.pdf"
                 />
               </div>
