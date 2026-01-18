@@ -1,0 +1,51 @@
+# MATRIX CBS - Rsync Exclude/Protect List
+# Ezek a fájlok SOHA nem törlődnek a szerverről
+# Használat: rsync --exclude-from=.rsync-exclude
+
+# ============================================
+# Konfiguráció (kritikus!)
+# ============================================
+.env
+.htaccess
+
+# ============================================
+# SEO fájlok (ha kézzel módosítva a szerveren)
+# ============================================
+robots.txt
+sitemap.xml
+
+# ============================================
+# Backupok és logok
+# ============================================
+backups/
+backups/**
+logs/
+logs/**
+
+# ============================================
+# Felhasználói tartalom
+# ============================================
+uploads/
+uploads/**
+
+# ============================================
+# ISPConfig által kezelt könyvtárak
+# ============================================
+stats/
+stats/**
+
+# ============================================
+# E-mail sablonok (névjegy)
+# ============================================
+nevjegy/
+nevjegy/**
+
+# ============================================
+# Egyéb védelemre szoruló
+# ============================================
+# PM2 fájlok
+ecosystem.config.js
+
+# Node modules - külön kezeljük
+node_modules/
+node_modules/**

@@ -1,6 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /_next/
-Disallow: /nevjegy/
-
-Sitemap: https://matrixcbs.com/sitemap.xml

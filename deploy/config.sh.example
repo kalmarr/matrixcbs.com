@@ -1,0 +1,52 @@
+#!/bin/bash
+
+#===============================================================================
+# MATRIX CBS - Deploy Konfiguracio
+#
+# FONTOS: Masold config.sh neven es toltsd ki a valos adatokkal!
+# A config.sh TILOS VERZIOKEZELESBE KERULNI!
+#
+# SSH kulcs beallitasa:
+#   1. Generalj SSH kulcsot: ssh-keygen -t ed25519 -C "deploy@matrixcbs"
+#   2. Masold a publikus kulcsot a szerverre: ssh-copy-id -p 17791 defaultmatrixCBS@srv.knh.hu
+#   3. Vagy add hozza a ~/.ssh/authorized_keys-hez a szerveren
+#===============================================================================
+
+# FTP kapcsolat
+FTP_HOST="srv.knh.hu"
+FTP_USER="defaultAsztalosMATRIXCBS"
+FTP_PASS="<FTP_JELSZO_IDE>"
+
+# SSH kapcsolat (kulcs alapu!)
+SSH_HOST="srv.knh.hu"
+SSH_PORT="17791"
+SSH_USER="defaultmatrixCBS"
+# Nincs jelszo - SSH kulcsot hasznalj!
+
+# Szerver utvonalak
+REMOTE_BASE="/var/www/clients/client0/web1"
+REMOTE_TMP="$REMOTE_BASE/tmp"
+REMOTE_WEB="$REMOTE_BASE/web"
+REMOTE_PRIVATE="$REMOTE_BASE/private"
+
+# ISPConfig felhasznalo/csoport
+WEB_USER="web1"
+WEB_GROUP="client0"
+
+#===============================================================================
+# Adatbazis beallitasok
+#===============================================================================
+
+# Lokalis adatbazis (Docker)
+LOCAL_DB_NAME="matrixcbs"
+LOCAL_DB_USER="matrixcbs"
+LOCAL_DB_PASS="matrixcbs_password"
+LOCAL_DB_HOST="localhost"
+LOCAL_DB_PORT="3306"
+LOCAL_DB_CONTAINER="matrixcbs-db"  # Docker container neve
+
+# Eles adatbazis (ISPConfig)
+REMOTE_DB_NAME="c0matrixCBS"
+REMOTE_DB_USER="c0matrixCBS"
+REMOTE_DB_PASS="<ADATBAZIS_JELSZO_IDE>"
+REMOTE_DB_HOST="localhost"

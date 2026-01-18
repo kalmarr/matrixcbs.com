@@ -1,0 +1,1 @@
+self.__REACT_LOADABLE_MANIFEST='{"src/components/ClientAnalytics.tsx -> @/components/WebVitals":{"id":7212,"files":["static/chunks/7212.431fe329700cc780.js"]},"src/components/ClientAnalytics.tsx -> @/components/analytics/GoogleAnalytics":{"id":5247,"files":["static/chunks/5247.ba1f974ea75331ae.js"]}}';
