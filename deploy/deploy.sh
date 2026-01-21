@@ -264,6 +264,27 @@ db_pull_remote() {
 }
 
 db_push_remote() {
+    local force_flag="${1:-}"
+
+    # Biztonsagi ellenorzes: --force flag kotelezosege
+    if [[ "$force_flag" != "--force" ]]; then
+        echo ""
+        echo -e "${RED}+==============================================================+${NC}"
+        echo -e "${RED}|                                                              |${NC}"
+        echo -e "${RED}|   ELES ADATBAZIS VEDELEM AKTIV                               |${NC}"
+        echo -e "${RED}|                                                              |${NC}"
+        echo -e "${RED}+==============================================================+${NC}"
+        echo ""
+        echo -e "${YELLOW}Ez a parancs FELULIRJA az eles adatbazist!${NC}"
+        echo ""
+        echo "A vedelemtol valo eltekinteshez hasznald a --force flaget:"
+        echo ""
+        echo -e "  ${CYAN}./deploy.sh db:push --force${NC}"
+        echo ""
+        log_warning "Adatbazis feltoltes letiltva biztonsagi okokbol"
+        exit 1
+    fi
+
     log_step "ELES ADATBAZIS FELULIRASA"
 
     echo ""
@@ -731,7 +752,7 @@ full_deploy() {
 
 show_help() {
     echo ""
-    echo -e "${CYAN}MATRIX CBS - Deploy Script v2.1${NC}"
+    echo -e "${CYAN}MATRIX CBS - Deploy Script v2.2${NC}"
     echo ""
     echo -e "${YELLOW}Hasznalat:${NC} ./deploy.sh <parancs>"
     echo ""
@@ -757,7 +778,7 @@ show_help() {
     echo "  db:restore  - Lokalis adatbazis visszaallitas"
     echo "  db:list     - Backupok listazasa"
     echo "  db:pull     - Eles adatbazis letoltese"
-    echo -e "  db:push     - ${RED}Lokalis DB feltoltese elesre (VESZELYES!)${NC}"
+    echo -e "  db:push --force - ${RED}Lokalis DB feltoltese elesre (VEDETT!)${NC}"
     echo "  db:remote   - Backup keszitese az eles szerveren"
     echo "  db:cleanup  - Regi backupok torlese (30+ nap)"
     echo ""
@@ -794,7 +815,7 @@ case "${1:-}" in
     db:restore)  db_restore_local "$2" ;;
     db:list)     db_list_backups ;;
     db:pull)     db_pull_remote ;;
-    db:push)     db_push_remote ;;
+    db:push)     db_push_remote "$2" ;;
     db:remote)   db_remote_backup ;;
     db:cleanup)  db_cleanup_old ;;
 
