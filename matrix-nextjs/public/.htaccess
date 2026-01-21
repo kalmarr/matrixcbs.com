@@ -28,17 +28,54 @@
     ExpiresByType font/woff2 "access plus 1 year"
 </IfModule>
 
-# Proxy requests to Next.js (skip if file exists)
+# ============================================
+# SEO REDIRECTS & PROXY CONFIGURATION
+# ============================================
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
 
-    # If the file or directory exists, serve it directly
+    # -----------------------------------------
+    # 1. Force HTTPS (http → https)
+    # -----------------------------------------
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+    # -----------------------------------------
+    # 2. Remove www (www.matrixcbs.com → matrixcbs.com)
+    # -----------------------------------------
+    RewriteCond %{HTTP_HOST} ^www\.matrixcbs\.com$ [NC]
+    RewriteRule ^(.*)$ https://matrixcbs.com/$1 [R=301,L]
+
+    # -----------------------------------------
+    # 3. Legacy URL redirects (old static HTML → new Next.js routes)
+    # -----------------------------------------
+    # Training pages → megoldasaink
+    RewriteRule ^trening\.html$ /megoldasaink/ [R=301,L]
+    RewriteRule ^trening/?$ /megoldasaink/ [R=301,L]
+
+    # Services page → megoldasaink
+    RewriteRule ^szolgaltatasok\.html$ /megoldasaink/ [R=301,L]
+
+    # Index.html → homepage
+    RewriteRule ^index\.html$ / [R=301,L]
+
+    # About page
+    RewriteRule ^rolunk\.html$ /rolunk/ [R=301,L]
+
+    # Contact page
+    RewriteRule ^contact\.html$ /kapcsolat/ [R=301,L]
+
+    # -----------------------------------------
+    # 4. Serve existing files/directories directly
+    # -----------------------------------------
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
 
-    # Proxy everything else to Next.js
+    # -----------------------------------------
+    # 5. Proxy everything else to Next.js
+    # -----------------------------------------
     RewriteRule ^(.*)$ http://127.0.0.1:3001/$1 [P,L]
 </IfModule>
 
