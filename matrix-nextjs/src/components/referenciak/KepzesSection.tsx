@@ -58,7 +58,7 @@ export function KepzesSection({ items }: KepzesSectionProps) {
               >
                 {/* Icon */}
                 <div className="inline-flex p-3 rounded-xl bg-gradient-to-br from-[var(--color-accent-red)]/10 to-[var(--color-accent-orange)]/10 border border-[var(--color-accent-red)]/20 mb-4">
-                  <GraduationCap className="w-7 h-7 text-[var(--color-accent-orange)]" />
+                  <GraduationCap className="w-7 h-7 text-[var(--color-accent-orange)]" aria-hidden="true" />
                 </div>
 
                 {/* Title */}
@@ -87,14 +87,14 @@ export function KepzesSection({ items }: KepzesSectionProps) {
                 <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-[var(--color-bg-tertiary)]">
                   {/* Period */}
                   <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-                    <Calendar className="w-4 h-4" />
+                    <Calendar className="w-4 h-4" aria-hidden="true" />
                     {periodText}
                   </div>
 
                   {/* Participants if exists */}
                   {kepzes.resztvevokSzama && (
                     <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-                      <Users className="w-4 h-4" />
+                      <Users className="w-4 h-4" aria-hidden="true" />
                       <span className="text-[var(--color-accent-orange)] font-semibold">
                         {kepzes.resztvevokSzama}
                       </span>{' '}

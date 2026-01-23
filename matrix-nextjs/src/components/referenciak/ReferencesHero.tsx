@@ -48,7 +48,7 @@ export function ReferencesHero({ statistics }: ReferencesHeroProps) {
             className="text-lg md:text-xl text-[var(--color-text-secondary)] max-w-2xl mx-auto"
             variants={fadeInUp}
           >
-            Több mint másfél évtizedes tapasztalattal segítjük partnereink
+            Több mint két évtizedes tapasztalattal segítjük partnereink
             fejlődését szakértői szolgáltatásainkkal.
           </motion.p>
         </motion.div>

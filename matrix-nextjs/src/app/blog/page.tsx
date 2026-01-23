@@ -30,85 +30,90 @@ interface BlogPageProps {
 }
 
 async function getBlogData(page: number) {
-  const skip = (page - 1) * POSTS_PER_PAGE;
+  try {
+    const skip = (page - 1) * POSTS_PER_PAGE;
 
-  const [posts, totalCount, categories] = await Promise.all([
-    prisma.post.findMany({
-      where: {
-        status: 'PUBLISHED',
-        publishedAt: {
-          lte: new Date(),
-        },
-      },
-      include: {
-        author: {
-          select: {
-            name: true,
+    const [posts, totalCount, categories] = await Promise.all([
+      prisma.post.findMany({
+        where: {
+          status: 'PUBLISHED',
+          publishedAt: {
+            lte: new Date(),
           },
         },
-        categories: {
-          include: {
-            category: true,
-          },
-          orderBy: {
-            category: {
-              sortOrder: 'asc',
+        include: {
+          author: {
+            select: {
+              name: true,
             },
           },
-        },
-      },
-      orderBy: {
-        publishedAt: 'desc',
-      },
-      take: POSTS_PER_PAGE,
-      skip,
-    }),
-    prisma.post.count({
-      where: {
-        status: 'PUBLISHED',
-        publishedAt: {
-          lte: new Date(),
-        },
-      },
-    }),
-    prisma.category.findMany({
-      where: {
-        posts: {
-          some: {
-            post: {
-              status: 'PUBLISHED',
-              publishedAt: {
-                lte: new Date(),
+          categories: {
+            include: {
+              category: true,
+            },
+            orderBy: {
+              category: {
+                sortOrder: 'asc',
               },
             },
           },
         },
-      },
-      orderBy: {
-        sortOrder: 'asc',
-      },
-      include: {
-        _count: {
-          select: {
-            posts: {
-              where: {
-                post: {
-                  status: 'PUBLISHED',
-                  publishedAt: {
-                    lte: new Date(),
+        orderBy: {
+          publishedAt: 'desc',
+        },
+        take: POSTS_PER_PAGE,
+        skip,
+      }),
+      prisma.post.count({
+        where: {
+          status: 'PUBLISHED',
+          publishedAt: {
+            lte: new Date(),
+          },
+        },
+      }),
+      prisma.category.findMany({
+        where: {
+          posts: {
+            some: {
+              post: {
+                status: 'PUBLISHED',
+                publishedAt: {
+                  lte: new Date(),
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          sortOrder: 'asc',
+        },
+        include: {
+          _count: {
+            select: {
+              posts: {
+                where: {
+                  post: {
+                    status: 'PUBLISHED',
+                    publishedAt: {
+                      lte: new Date(),
+                    },
                   },
                 },
               },
             },
           },
         },
-      },
-    }),
-  ]);
+      }),
+    ]);
 
-  const totalPages = Math.ceil(totalCount / POSTS_PER_PAGE);
+    const totalPages = Math.ceil(totalCount / POSTS_PER_PAGE);
 
-  return { posts, totalPages, categories, totalCount };
+    return { posts, totalPages, categories, totalCount };
+  } catch (error) {
+    console.error('Failed to fetch blog data:', error);
+    return { posts: [], totalPages: 0, categories: [], totalCount: 0 };
+  }
 }
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {

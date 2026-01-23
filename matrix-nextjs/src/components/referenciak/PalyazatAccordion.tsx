@@ -7,9 +7,86 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Globe, Home } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { fadeInUp } from '@/lib/animations';
 import type { Palyazat } from '@/types/referenciak';
+
+// EU Flag SVG Component - official 12 golden 5-pointed stars on blue
+function EUFlag({ className }: { className?: string }) {
+  // Create 5-pointed star polygon points
+  const starPoints = (cx: number, cy: number, outer: number, inner: number) => {
+    const pts: string[] = [];
+    for (let i = 0; i < 5; i++) {
+      // Outer point
+      const outerAngle = (i * 72 - 90) * Math.PI / 180;
+      pts.push(`${cx + outer * Math.cos(outerAngle)},${cy + outer * Math.sin(outerAngle)}`);
+      // Inner point
+      const innerAngle = (i * 72 + 36 - 90) * Math.PI / 180;
+      pts.push(`${cx + inner * Math.cos(innerAngle)},${cy + inner * Math.sin(innerAngle)}`);
+    }
+    return pts.join(' ');
+  };
+
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="EU zászló"
+    >
+      <defs>
+        <clipPath id="euFlagClip">
+          <rect width="24" height="24" rx="3" />
+        </clipPath>
+      </defs>
+      <g clipPath="url(#euFlagClip)">
+        {/* Blue background - official EU blue #003399 */}
+        <rect width="24" height="24" fill="#003399" />
+        {/* 12 golden 5-pointed stars arranged in a circle */}
+        {[...Array(12)].map((_, i) => {
+          const angle = (i * 30 - 90) * Math.PI / 180;
+          const cx = 12 + 7 * Math.cos(angle);
+          const cy = 12 + 7 * Math.sin(angle);
+          return (
+            <polygon
+              key={i}
+              points={starPoints(cx, cy, 2.2, 0.85)}
+              fill="#FFCC00"
+            />
+          );
+        })}
+      </g>
+    </svg>
+  );
+}
+
+// Hungarian Flag SVG Component
+function HungarianFlag({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="Magyar zászló"
+    >
+      <defs>
+        <clipPath id="hunFlagClip">
+          <rect width="24" height="24" rx="3" />
+        </clipPath>
+      </defs>
+      <g clipPath="url(#hunFlagClip)">
+        {/* Red stripe (top) */}
+        <rect x="0" y="0" width="24" height="8" fill="#CE2939" />
+        {/* White stripe (middle) */}
+        <rect x="0" y="8" width="24" height="8" fill="#FFFFFF" />
+        {/* Green stripe (bottom) */}
+        <rect x="0" y="16" width="24" height="8" fill="#477050" />
+      </g>
+    </svg>
+  );
+}
 
 interface PalyazatAccordionProps {
   eu: Palyazat[];
@@ -63,8 +140,8 @@ function AccordionSection({
       >
         <div className="flex items-center gap-3">
           {/* Icon */}
-          <div className={`p-2.5 rounded-lg ${colors.iconBg}`}>
-            <Icon className={`w-5 h-5 ${colors.iconColor}`} />
+          <div className={`p-2 rounded-lg ${colors.iconBg}`}>
+            <Icon className="w-8 h-8" aria-hidden="true" />
           </div>
 
           {/* Title and count */}
@@ -90,6 +167,7 @@ function AccordionSection({
                 ? colors.iconColor
                 : 'text-[var(--color-gray-medium)]'
             }`}
+            aria-hidden="true"
           />
         </motion.div>
       </button>
@@ -163,7 +241,7 @@ export function PalyazatAccordion({ eu, hazai }: PalyazatAccordionProps) {
       <div className="space-y-4">
         <AccordionSection
           title="Uniós és régiós konstrukciók"
-          icon={Globe}
+          icon={EUFlag}
           items={eu}
           defaultOpen={true}
           accentColor="red"
@@ -171,7 +249,7 @@ export function PalyazatAccordion({ eu, hazai }: PalyazatAccordionProps) {
 
         <AccordionSection
           title="Nemzeti, hazai kormányzati programok"
-          icon={Home}
+          icon={HungarianFlag}
           items={hazai}
           defaultOpen={false}
           accentColor="orange"

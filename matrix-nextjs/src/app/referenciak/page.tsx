@@ -6,6 +6,9 @@ import Script from 'next/script';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { ReferencesContent } from './ReferencesContent';
 
+// ISR - Incremental Static Regeneration (1 óra cache)
+export const revalidate = 3600;
+
 // SEO optimalizált metadatok
 export const metadata: Metadata = {
   title: 'Referenciák | Szakértések és pályázatírás - MATRIX CBS',
@@ -54,50 +57,96 @@ export const metadata: Metadata = {
   },
 };
 
-// JSON-LD strukturált adatok
-const jsonLdData = {
-  '@context': 'https://schema.org',
-  '@type': 'CollectionPage',
-  name: 'MATRIX CBS Kft. Referenciák',
-  description:
-    'Szakértési projektek, akkreditációs megbízatások, képzések és pályázatírás referenciái.',
-  url: 'https://matrixcbs.com/referenciak/',
-  mainEntity: {
-    '@type': 'ItemList',
-    numberOfItems: 38,
+// JSON-LD strukturált adatok - CollectionPage + Organization + BreadcrumbList
+const jsonLdData = [
+  // CollectionPage schema
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'MATRIX CBS Kft. Referenciák',
+    description:
+      'Szakértési projektek, akkreditációs megbízatások, képzések és pályázatírás referenciái.',
+    url: 'https://matrixcbs.com/referenciak/',
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: 38,
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Szakértések',
+          description: 'Tanácsadói és szakértői projektek',
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Megbízatások',
+          description: 'Akkreditációk és szakértői pozíciók',
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: 'Képzések',
+          description: 'Felnőttképzési programok',
+        },
+        {
+          '@type': 'ListItem',
+          position: 4,
+          name: 'Pályázatírás',
+          description: 'EU és hazai pályázatok',
+        },
+      ],
+    },
+    isPartOf: {
+      '@type': 'WebSite',
+      name: 'MATRIX CBS Kft.',
+      url: 'https://matrixcbs.com',
+    },
+  },
+  // BreadcrumbList schema
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
     itemListElement: [
       {
         '@type': 'ListItem',
         position: 1,
-        name: 'Szakértések',
-        description: 'Tanácsadói és szakértői projektek',
+        name: 'Kezdőlap',
+        item: 'https://matrixcbs.com/',
       },
       {
         '@type': 'ListItem',
         position: 2,
-        name: 'Megbízatások',
-        description: 'Akkreditációk és szakértői pozíciók',
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: 'Képzések',
-        description: 'Felnőttképzési programok',
-      },
-      {
-        '@type': 'ListItem',
-        position: 4,
-        name: 'Pályázatírás',
-        description: 'EU és hazai pályázatok',
+        name: 'Referenciák',
+        item: 'https://matrixcbs.com/referenciak/',
       },
     ],
   },
-  isPartOf: {
-    '@type': 'WebSite',
+  // Organization schema - MATRIX CBS
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': 'https://matrixcbs.com/#organization',
     name: 'MATRIX CBS Kft.',
     url: 'https://matrixcbs.com',
+    description:
+      'Felnőttképzési szakértő, akkreditációs tanácsadás és pályázatírás Szegeden.',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Szeged',
+      addressCountry: 'HU',
+    },
+    knowsAbout: [
+      'Felnőttképzés',
+      'Akkreditáció',
+      'Pályázatírás',
+      'NAH akkreditáció',
+      'Vizsgaközpont akkreditáció',
+      'Szervezetfejlesztés',
+      'HR tanácsadás',
+    ],
   },
-};
+];
 
 export default function ReferenciakPage() {
   return (

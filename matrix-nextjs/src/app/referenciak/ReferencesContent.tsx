@@ -31,7 +31,45 @@ export function ReferencesContent() {
   const [activeTab, setActiveTab] = useState<ReferenceCategory>('szakertesek');
 
   return (
-    <>
+    <main>
+      {/* Breadcrumb navigáció - SEO */}
+      <nav
+        aria-label="Breadcrumb"
+        className="max-w-[var(--max-content-width)] mx-auto px-4 sm:px-6 lg:px-8 pt-4"
+      >
+        <ol
+          itemScope
+          itemType="https://schema.org/BreadcrumbList"
+          className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]"
+        >
+          <li
+            itemProp="itemListElement"
+            itemScope
+            itemType="https://schema.org/ListItem"
+          >
+            <Link
+              itemProp="item"
+              href="/"
+              className="hover:text-[var(--color-accent-orange)] transition-colors"
+            >
+              <span itemProp="name">Kezdőlap</span>
+            </Link>
+            <meta itemProp="position" content="1" />
+          </li>
+          <li aria-hidden="true">/</li>
+          <li
+            itemProp="itemListElement"
+            itemScope
+            itemType="https://schema.org/ListItem"
+          >
+            <span itemProp="name" className="text-[var(--color-text-primary)]">
+              Referenciák
+            </span>
+            <meta itemProp="position" content="2" />
+          </li>
+        </ol>
+      </nav>
+
       {/* Hero szekció statisztikákkal */}
       <ReferencesHero statistics={heroStatistics} />
 
@@ -128,8 +166,35 @@ export function ReferencesContent() {
               </a>
             </div>
           </div>
+
+          {/* Kapcsolódó oldalak - belső linkek SEO-hoz */}
+          <div className="mt-12 text-center">
+            <p className="text-[var(--color-text-muted)] mb-4">
+              Ismerje meg szolgáltatásainkat:
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link
+                href="/megoldasaink/"
+                className="text-[var(--color-accent-orange)] hover:text-[var(--color-accent-red)] transition-colors underline underline-offset-4"
+              >
+                Megoldásaink
+              </Link>
+              <Link
+                href="/rolunk/"
+                className="text-[var(--color-accent-orange)] hover:text-[var(--color-accent-red)] transition-colors underline underline-offset-4"
+              >
+                Rólunk
+              </Link>
+              <Link
+                href="/gyik/"
+                className="text-[var(--color-accent-orange)] hover:text-[var(--color-accent-red)] transition-colors underline underline-offset-4"
+              >
+                Gyakori kérdések
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
-    </>
+    </main>
   );
 }

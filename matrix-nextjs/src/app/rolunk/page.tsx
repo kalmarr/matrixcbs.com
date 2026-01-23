@@ -176,6 +176,19 @@ export default function RolunkPage() {
               </p>
             </div>
           </ScrollReveal>
+
+          {/* Referenciák gomb */}
+          <ScrollReveal className="text-center mt-8">
+            <a
+              href="/referenciak"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[var(--color-accent-red)] to-[var(--color-accent-orange)] text-white font-semibold hover:opacity-90 transition-opacity"
+            >
+              Referenciáink
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </ScrollReveal>
         </div>
       </section>
 

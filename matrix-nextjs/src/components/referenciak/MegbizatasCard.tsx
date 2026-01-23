@@ -59,7 +59,7 @@ export function MegbizatasCard({ item, index }: MegbizatasCardProps) {
   const status = statusConfig[item.statusz];
   const periodText = item.idoszak.veg
     ? `${item.idoszak.kezdet} - ${item.idoszak.veg}`
-    : `${item.idoszak.kezdet}-től`;
+    : item.idoszak.kezdet;
 
   return (
     <motion.div
@@ -89,7 +89,7 @@ export function MegbizatasCard({ item, index }: MegbizatasCardProps) {
         <div className="flex items-start justify-between mb-4">
           {/* Icon */}
           <div className="p-3 rounded-xl bg-gradient-to-br from-[var(--color-accent-red)]/10 to-[var(--color-accent-orange)]/10 border border-[var(--color-accent-red)]/20">
-            <Icon className="w-6 h-6 text-[var(--color-accent-orange)]" />
+            <Icon className="w-6 h-6 text-[var(--color-accent-orange)]" aria-hidden="true" />
           </div>
 
           {/* Status badge */}
@@ -125,6 +125,7 @@ export function MegbizatasCard({ item, index }: MegbizatasCardProps) {
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -144,6 +145,7 @@ export function MegbizatasCard({ item, index }: MegbizatasCardProps) {
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
