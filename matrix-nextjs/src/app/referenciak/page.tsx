@@ -1,126 +1,118 @@
 // MATRIX CBS - Referenciák oldal
-// Publikus oldal az ügyfélreferenciák megjelenítésére
+// Szakértések, megbízatások, képzések és pályázatok bemutatása
 
-import { Metadata } from 'next'
-import prisma from '@/lib/prisma'
-import ReferenceCard from '@/components/marketing/ReferenceCard'
-import { MainLayout } from '@/components/layout/MainLayout'
+import { Metadata } from 'next';
+import Script from 'next/script';
+import { MainLayout } from '@/components/layout/MainLayout';
+import { ReferencesContent } from './ReferencesContent';
 
-// Force dynamic rendering - this page needs database access
-export const dynamic = 'force-dynamic';
-
+// SEO optimalizált metadatok
 export const metadata: Metadata = {
-  title: 'Referenciák',
+  title: 'Referenciák | Szakértések és pályázatírás - MATRIX CBS',
   description:
-    'Partnereink véleménye a MATRIX CBS Kft. képzéseiről és szolgáltatásairól. Nézze meg, hogyan segítettünk más szervezeteknek.',
+    '15+ év szakmai tapasztalat a felnőttképzés, akkreditáció és pályázatírás területén. Ismerje meg sikeres projektjeinket és szakértői megbízatásainkat: NSZI, NAH, BM, OKF szakértések.',
+  keywords: [
+    'felnőttképzési szakértő',
+    'akkreditációs tanácsadás',
+    'pályázatírás',
+    'GINOP pályázat',
+    'TÁMOP pályázat',
+    'NAH akkreditáció',
+    'NSZI szakértő',
+    'vizsgaközpont akkreditáció',
+    'szervezetfejlesztés',
+    'HR tanácsadás',
+  ],
   openGraph: {
+    title: 'Referenciák | MATRIX CBS Kft. - Szakértések és pályázatírás',
+    description:
+      '15+ év tapasztalat, 20+ sikeres pályázat, 7+ akkreditáció. Tekintse meg szakmai referenciáinkat a felnőttképzés, akkreditáció és pályázatírás területén.',
+    type: 'website',
+    locale: 'hu_HU',
+    siteName: 'MATRIX CBS Kft.',
+    url: 'https://matrixcbs.com/referenciak/',
+  },
+  twitter: {
+    card: 'summary_large_image',
     title: 'Referenciák | MATRIX CBS Kft.',
     description:
-      'Partnereink véleménye a MATRIX CBS Kft. képzéseiről és szolgáltatásairól.',
-    type: 'website',
+      '15+ év szakmai tapasztalat a felnőttképzés és pályázatírás területén.',
   },
-}
+  alternates: {
+    canonical: 'https://matrixcbs.com/referenciak/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+};
 
-async function getReferences() {
-  try {
-    const references = await prisma.reference.findMany({
-      where: {
-        isActive: true,
+// JSON-LD strukturált adatok
+const jsonLdData = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'MATRIX CBS Kft. Referenciák',
+  description:
+    'Szakértési projektek, akkreditációs megbízatások, képzések és pályázatírás referenciái.',
+  url: 'https://matrixcbs.com/referenciak/',
+  mainEntity: {
+    '@type': 'ItemList',
+    numberOfItems: 38,
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Szakértések',
+        description: 'Tanácsadói és szakértői projektek',
       },
-      orderBy: [
-        { featured: 'desc' },
-        { sortOrder: 'asc' },
-        { createdAt: 'desc' },
-      ],
-    })
-    return references
-  } catch (error) {
-    console.error('Error fetching references:', error)
-    return []
-  }
-}
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Megbízatások',
+        description: 'Akkreditációk és szakértői pozíciók',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: 'Képzések',
+        description: 'Felnőttképzési programok',
+      },
+      {
+        '@type': 'ListItem',
+        position: 4,
+        name: 'Pályázatírás',
+        description: 'EU és hazai pályázatok',
+      },
+    ],
+  },
+  isPartOf: {
+    '@type': 'WebSite',
+    name: 'MATRIX CBS Kft.',
+    url: 'https://matrixcbs.com',
+  },
+};
 
-export default async function ReferenciakPage() {
-  const references = await getReferences()
-
+export default function ReferenciakPage() {
   return (
     <MainLayout>
-      {/* Hero szekció */}
-      <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Partnereink véleménye
-            </h1>
-            <p className="text-xl text-gray-300">
-              Büszkék vagyunk arra, hogy sok szervezetnek segíthettünk
-              fejlődésük útján. Olvassa el partnereink véleményét
-              szolgáltatásainkról.
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* JSON-LD Script - Next.js Script komponens */}
+      <Script
+        id="references-jsonld"
+        type="application/ld+json"
+        strategy="afterInteractive"
+      >
+        {JSON.stringify(jsonLdData)}
+      </Script>
 
-      {/* Referenciák szekció */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          {references.length === 0 ? (
-            <div className="text-center py-16">
-              <p className="text-gray-600 text-lg">
-                Jelenleg nincsenek publikus referenciák.
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {references.map((reference) => (
-                <ReferenceCard
-                  key={reference.id}
-                  companyName={reference.companyName}
-                  contactName={reference.contactName}
-                  contactRole={reference.contactRole}
-                  testimonial={reference.testimonial}
-                  logoPath={reference.logoPath}
-                  websiteUrl={reference.websiteUrl}
-                  featured={reference.featured}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* CTA szekció */}
-      <section className="py-16 px-4">
-        <div className="max-w-[var(--max-content-width)] mx-auto">
-          <div className="text-center py-16 px-8 lg:py-20 lg:px-16 rounded-[var(--radius-lg)] bg-gradient-to-br from-[var(--color-accent-red)] to-[var(--color-accent-orange)] shadow-[var(--shadow-lg)]">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
-              Szeretne Ön is partnereink közé tartozni?
-            </h2>
-            <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Vegye fel velünk a kapcsolatot, és beszéljük meg, hogyan
-              segíthetünk szervezete fejlődésében!
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="/kapcsolat/">
-                <button
-                  type="button"
-                  className="inline-flex items-center justify-center gap-2 font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent-orange)] focus-visible:ring-offset-2 px-8 py-4 text-lg rounded-[var(--radius-md)] bg-white text-[var(--color-accent-red)] hover:bg-white/90"
-                >
-                  Kapcsolatfelvétel
-                </button>
-              </a>
-              <a href="tel:+36703272146">
-                <button
-                  type="button"
-                  className="inline-flex items-center justify-center gap-2 font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent-orange)] focus-visible:ring-offset-2 bg-transparent border-2 hover:text-white px-8 py-4 text-lg rounded-[var(--radius-md)] border-white text-white hover:bg-white/10"
-                >
-                  +36 70 327 2146
-                </button>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Main Content - Client Component */}
+      <ReferencesContent />
     </MainLayout>
-  )
+  );
 }

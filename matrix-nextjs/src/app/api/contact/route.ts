@@ -1,13 +1,19 @@
 // MATRIX CBS - Public Contact Form API
 // POST: Submit contact message with email notifications
 
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
 import {
   sendEmail,
   getAdminNotificationEmail,
   getCustomerConfirmationEmail
 } from '@/lib/email'
+import {
+  jsonResponse,
+  createdResponse,
+  badRequestResponse,
+  serverErrorResponse
+} from '@/lib/api-utils'
 
 // Rate limiting map (in-memory, basic implementation)
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
@@ -52,7 +58,7 @@ export async function POST(request: NextRequest) {
 
     // Check rate limit
     if (!checkRateLimit(ip)) {
-      return NextResponse.json(
+      return jsonResponse(
         { error: 'Túl sok üzenet. Kérjük, várjon 15 percet.' },
         { status: 429 }
       )
@@ -63,86 +69,53 @@ export async function POST(request: NextRequest) {
 
     // Validation - firstName required
     if (!firstName || typeof firstName !== 'string') {
-      return NextResponse.json(
-        { error: 'A keresztnév megadása kötelező' },
-        { status: 400 }
-      )
+      return badRequestResponse('A keresztnév megadása kötelező')
     }
 
     // Validation - lastName required
     if (!lastName || typeof lastName !== 'string') {
-      return NextResponse.json(
-        { error: 'A vezetéknév megadása kötelező' },
-        { status: 400 }
-      )
+      return badRequestResponse('A vezetéknév megadása kötelező')
     }
 
     // Validation - email required
     if (!email || typeof email !== 'string') {
-      return NextResponse.json(
-        { error: 'Az email cím megadása kötelező' },
-        { status: 400 }
-      )
+      return badRequestResponse('Az email cím megadása kötelező')
     }
 
     // Validation - message required
     if (!message || typeof message !== 'string') {
-      return NextResponse.json(
-        { error: 'Az üzenet megadása kötelező' },
-        { status: 400 }
-      )
+      return badRequestResponse('Az üzenet megadása kötelező')
     }
 
     // Email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Érvénytelen email cím' },
-        { status: 400 }
-      )
+      return badRequestResponse('Érvénytelen email cím')
     }
 
     // Length validation
     if (firstName.length > 50) {
-      return NextResponse.json(
-        { error: 'A keresztnév túl hosszú (max. 50 karakter)' },
-        { status: 400 }
-      )
+      return badRequestResponse('A keresztnév túl hosszú (max. 50 karakter)')
     }
 
     if (lastName.length > 50) {
-      return NextResponse.json(
-        { error: 'A vezetéknév túl hosszú (max. 50 karakter)' },
-        { status: 400 }
-      )
+      return badRequestResponse('A vezetéknév túl hosszú (max. 50 karakter)')
     }
 
     if (email.length > 254) {
-      return NextResponse.json(
-        { error: 'Az email cím túl hosszú' },
-        { status: 400 }
-      )
+      return badRequestResponse('Az email cím túl hosszú')
     }
 
     if (phone && phone.length > 20) {
-      return NextResponse.json(
-        { error: 'A telefonszám túl hosszú (max. 20 karakter)' },
-        { status: 400 }
-      )
+      return badRequestResponse('A telefonszám túl hosszú (max. 20 karakter)')
     }
 
     if (message.length < 10) {
-      return NextResponse.json(
-        { error: 'Az üzenet túl rövid (min. 10 karakter)' },
-        { status: 400 }
-      )
+      return badRequestResponse('Az üzenet túl rövid (min. 10 karakter)')
     }
 
     if (message.length > 5000) {
-      return NextResponse.json(
-        { error: 'Az üzenet túl hosszú (max. 5000 karakter)' },
-        { status: 400 }
-      )
+      return badRequestResponse('Az üzenet túl hosszú (max. 5000 karakter)')
     }
 
     // Get user agent
@@ -185,19 +158,13 @@ export async function POST(request: NextRequest) {
       console.error('Failed to send customer confirmation email')
     }
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: 'Üzenetét sikeresen elküldtük. Hamarosan válaszolunk!',
-        id: contactMessage.id
-      },
-      { status: 201 }
-    )
+    return createdResponse({
+      success: true,
+      message: 'Üzenetét sikeresen elküldtük. Hamarosan válaszolunk!',
+      id: contactMessage.id
+    })
   } catch (error) {
     console.error('Error saving contact message:', error)
-    return NextResponse.json(
-      { error: 'Hiba történt az üzenet küldésekor. Kérjük, próbálja újra később.' },
-      { status: 500 }
-    )
+    return serverErrorResponse('Hiba történt az üzenet küldésekor. Kérjük, próbálja újra később.')
   }
 }

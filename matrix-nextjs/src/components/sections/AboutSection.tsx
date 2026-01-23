@@ -32,30 +32,29 @@ export function AboutSection() {
             <div className="flex-1 h-1 mx-8 bg-gradient-to-r from-[var(--color-accent-red)] to-[var(--color-accent-orange)] rounded-full" />
             <div className="text-center">
               <span className="text-3xl font-bold text-[var(--color-accent-orange)]">2026</span>
-              <p className="text-sm text-[var(--color-text-muted)] mt-1">26 év tapasztalat</p>
+              <p className="text-sm text-[var(--color-text-muted)] mt-1">20 év tapasztalat</p>
             </div>
           </motion.div>
 
-          {/* Main content - EREDETI SZÖVEGEK */}
+          {/* Main content */}
           <motion.div variants={fadeInUp} className="space-y-6 mb-16">
             <p className="text-lg text-[var(--color-text-secondary)] leading-relaxed">
-              A MATRIX CBS Kft. 2006 óta foglalkozik felnőttképzéssel és szervezeti fejlesztéssel.
-              Kezdetektől fogva a minőség, a szakmai hitelesség és a folyamatos megújulás határozza
-              meg működésünket.
+              A MATRIX CBS Kft. több mint két évtizede végez felnőttképzési és szervezetfejlesztési
+              tevékenységet, munkáját végig a szakmai megalapozottság, a minőségi szemlélet és az
+              alkalmazkodóképesség jellemezte.
             </p>
 
             <p className="text-lg text-[var(--color-text-secondary)] leading-relaxed">
-              Az elmúlt két évtizedben azokon a területeken maradtunk jelen és erősödtünk meg, ahol
-              valós igény mutatkozott, és ahol kézzelfogható eredményeket tudtunk felmutatni – legyen
-              szó szervezetekről, cégekről vagy intézményi működésről.
+              Működésünk során tudatosan azokra a területekre fókuszáltunk, ahol valódi igény jelent
+              meg, és ahol mérhető, gyakorlati eredményeket tudtunk elérni szervezetek, vállalkozások
+              és intézmények számára.
             </p>
 
             <p className="text-lg text-[var(--color-text-secondary)] leading-relaxed">
-              Partnereink és megbízóink visszajelzései folyamatosan formálták a szemléletünket. Ennek
-              köszönhetően tudtuk megőrizni lendületes, dinamikus működésünket, miközben végig
-              emberközeli, elérhető és együttműködő partnerek maradtunk. Ez a tapasztalat adja azt a
-              stabil alapot, amelyre ma is minden fejlesztést, tréninget és működésoptimalizálási
-              projektet építünk.
+              Ügyfeleink visszajelzései folyamatos iránytűként szolgáltak fejlődésünkhöz, lehetővé
+              téve, hogy rugalmasan, mégis következetes szakmai alapokon dolgozzunk. Ez a szemlélet
+              biztosítja azt a stabil hátteret, amelyre jelenlegi fejlesztési, tréning- és
+              működésoptimalizálási megoldásaink épülnek.
             </p>
           </motion.div>
 

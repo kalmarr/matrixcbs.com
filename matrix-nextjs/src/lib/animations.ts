@@ -386,3 +386,89 @@ export const hexagonHover = {
     transition: transitions.spring,
   },
 };
+
+// ===== REFERENCES PAGE ANIMATIONS =====
+
+export const countUp: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 20,
+    scale: 0.9,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.6,
+      ease: [0.25, 0.1, 0.25, 1],
+    },
+  },
+};
+
+export const statisticPulse = {
+  rest: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.05,
+    transition: transitions.spring,
+  },
+};
+
+export const tabIndicator: Variants = {
+  initial: { opacity: 0, scaleX: 0.8 },
+  animate: {
+    opacity: 1,
+    scaleX: 1,
+    transition: transitions.spring,
+  },
+  exit: { opacity: 0, scaleX: 0.8 },
+};
+
+export const tabContent: Variants = {
+  enter: {
+    opacity: 0,
+    x: 20,
+  },
+  center: {
+    opacity: 1,
+    x: 0,
+    transition: transitions.smooth,
+  },
+  exit: {
+    opacity: 0,
+    x: -20,
+    transition: transitions.fast,
+  },
+};
+
+export const timelineItem: Variants = {
+  hidden: {
+    opacity: 0,
+    x: -30,
+  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.5,
+      ease: [0.25, 0.1, 0.25, 1],
+    },
+  },
+};
+
+export const timelineDot: Variants = {
+  hidden: {
+    scale: 0,
+    opacity: 0,
+  },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      duration: 0.3,
+      ease: [0.34, 1.56, 0.64, 1],
+    },
+  },
+};
