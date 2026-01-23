@@ -16,9 +16,24 @@ Thumbs.db
 *.log
 error_log
 
-# Environment
+# Environment - NEVER COMMIT!
 .env
+.env.*
 .env.local
+.env.production
+.env.development
+*/.env
+*/.env.*
+deploy/.env*
+
+# Sensitive scripts
+**/reset-admin.ts
+**/reset-password.*
+
+# Docker local config
+docker-compose.yml
+docker-compose.override.yml
+start.sh
 
 # Backup files
 *.bak
