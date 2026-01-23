@@ -12,42 +12,44 @@ async function main() {
   // ============================================
   // ADMIN FELHASZNÁLÓK
   // ============================================
-  // Specifikus jelszavak hash-elése
-  const kalmarrPassword = await hash('REDACTED', 12)
-  const baloghPassword = await hash('REDACTED', 12) // Alapértelmezett jelszó, változtatható
+  // FONTOS: Jelszavak környezeti változókból! Soha ne hardcode-olj jelszót!
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD
+  if (!adminPassword) {
+    console.log('SEED_ADMIN_PASSWORD not set - skipping admin creation')
+    console.log('Set SEED_ADMIN_PASSWORD env var to create admin users')
+  } else {
+    const passwordHash = await hash(adminPassword, 12)
 
-  const admins = [
-    {
-      email: 'kalmarr@gmail.com',
-      name: 'Kalmár Róbert',
-      role: AdminRole.SUPER_ADMIN,
-      passwordHash: kalmarrPassword,
-    },
-    {
-      email: 'balogh.monek@gmail.com',
-      name: 'Balogh Mónika',
-      role: AdminRole.ADMIN,
-      passwordHash: baloghPassword,
-    },
-  ]
+    const admins = [
+      {
+        email: 'kalmarr@gmail.com',
+        name: 'Kalmár Róbert',
+        role: AdminRole.SUPER_ADMIN,
+      },
+      {
+        email: 'balogh.monek@gmail.com',
+        name: 'Balogh Mónika',
+        role: AdminRole.ADMIN,
+      },
+    ]
 
-  for (const adminData of admins) {
-    const admin = await prisma.admin.upsert({
-      where: { email: adminData.email },
-      update: {
-        passwordHash: adminData.passwordHash,
-        name: adminData.name,
-        role: adminData.role,
-      },
-      create: {
-        email: adminData.email,
-        passwordHash: adminData.passwordHash,
-        name: adminData.name,
-        role: adminData.role,
-        isActive: true,
-      },
-    })
-    console.log('Admin user created/updated:', admin.email)
+    for (const adminData of admins) {
+      const admin = await prisma.admin.upsert({
+        where: { email: adminData.email },
+        update: {
+          name: adminData.name,
+          role: adminData.role,
+        },
+        create: {
+          email: adminData.email,
+          passwordHash,
+          name: adminData.name,
+          role: adminData.role,
+          isActive: true,
+        },
+      })
+      console.log('Admin user created/updated:', admin.email)
+    }
   }
 
   // ============================================
