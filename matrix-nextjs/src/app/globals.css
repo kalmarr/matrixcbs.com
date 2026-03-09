@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* MATRIX CBS Kft. - Corporate Futurism Design System */
 :root {

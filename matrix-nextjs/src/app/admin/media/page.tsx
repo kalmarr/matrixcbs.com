@@ -159,7 +159,7 @@ export default function MediaLibraryPage() {
         <div className="bg-white rounded-lg shadow-sm p-6 space-y-4">
           {/* Upload Button */}
           <div className="flex items-center justify-between">
-            <label className="relative">
+            <label className="relative cursor-pointer">
               <input
                 type="file"
                 accept="image/*"
@@ -168,10 +168,8 @@ export default function MediaLibraryPage() {
                 disabled={uploading}
                 className="hidden"
               />
-              <button
-                type="button"
-                disabled={uploading}
-                className="flex items-center gap-2 px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+              <span
+                className={`flex items-center gap-2 px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {uploading ? (
                   <>
@@ -184,7 +182,7 @@ export default function MediaLibraryPage() {
                     Új fájl feltöltése
                   </>
                 )}
-              </button>
+              </span>
             </label>
 
             <div className="text-sm text-gray-500">

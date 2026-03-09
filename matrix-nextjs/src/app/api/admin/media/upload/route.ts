@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
     const yearDir = `${baseDir}/${year}`
     const uploadDir = `${yearDir}/${month}`
     const filePath = `${uploadDir}/${filename}`
-    const relativePath = `uploads/${year}/${month}/${filename}`
+    const relativePath = `/uploads/${year}/${month}/${filename}`
 
     // Create directory if it doesn't exist
     await mkdir(uploadDir, { recursive: true })
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
         // Generate thumbnail (max 300x300)
         const thumbFilename = `${timestamp}-${random}-thumb.${safeExt}`
         const thumbPath = `${uploadDir}/${thumbFilename}`
-        thumbnailPath = `uploads/${year}/${month}/${thumbFilename}`
+        thumbnailPath = `/uploads/${year}/${month}/${thumbFilename}`
 
         await image
           .resize(300, 300, {

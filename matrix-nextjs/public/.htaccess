@@ -48,6 +48,12 @@
     RewriteRule ^(.*)$ https://matrixcbs.com/$1 [R=301,L]
 
     # -----------------------------------------
+    # 2b. Strip spam query parameters (SEO protection)
+    # -----------------------------------------
+    RewriteCond %{QUERY_STRING} ^[a-z]{5,10}$ [NC]
+    RewriteRule ^(.*)$ /$1? [R=301,L]
+
+    # -----------------------------------------
     # 3. Legacy URL redirects (old static HTML → new Next.js routes)
     # -----------------------------------------
     # Training pages → megoldasaink
@@ -57,6 +63,11 @@
     # Services page → megoldasaink
     RewriteRule ^szolgaltatasok\.html$ /megoldasaink/ [R=301,L]
 
+    # szolgaltasok (ékezet nélküli változat - elgépelés az eredetiben!)
+    RewriteRule ^szolgaltasok\.html$ /megoldasaink/ [R=301,L]
+    RewriteRule ^szolgaltasok/?$ /megoldasaink/ [R=301,L]
+    RewriteRule ^szolgaltatasok/?$ /megoldasaink/ [R=301,L]
+
     # Index.html → homepage
     RewriteRule ^index\.html$ / [R=301,L]
 
@@ -65,6 +76,9 @@
 
     # Contact page
     RewriteRule ^contact\.html$ /kapcsolat/ [R=301,L]
+
+    # Contact without .html extension
+    RewriteRule ^contact/?$ /kapcsolat/ [R=301,L]
 
     # -----------------------------------------
     # 4. Serve existing files/directories directly
