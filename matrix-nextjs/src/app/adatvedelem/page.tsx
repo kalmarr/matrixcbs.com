@@ -21,7 +21,7 @@ export default function AdatvedelemPage() {
               Adatvédelmi Tájékoztató
             </h1>
             <p className="text-lg text-[var(--color-text-muted)]">
-              Utolsó módosítás: 2025. január
+              Utolsó módosítás: 2026. január
             </p>
           </ScrollReveal>
         </div>
@@ -139,7 +139,7 @@ export default function AdatvedelemPage() {
                     Ezek a cookie-k a weboldal működéséhez elengedhetetlenek:
                   </p>
                   <ul className="list-disc list-inside text-[var(--color-text-secondary)] space-y-2">
-                    <li><strong>matrixcbs_cookie_consent:</strong> Cookie hozzájárulás tárolása (1 év)</li>
+                    <li><strong>matrix-cbs-cookie-consent:</strong> Cookie hozzájárulás tárolása (localStorage, 1 év)</li>
                     <li><strong>session:</strong> Munkamenet azonosító (munkamenet végéig)</li>
                   </ul>
 

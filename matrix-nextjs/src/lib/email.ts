@@ -236,7 +236,7 @@ export function getCustomerConfirmationEmail(data: ContactFormData): EmailOption
         <div style="margin-top: 15px;">
           <a href="https://matrixcbs.com" style="color: #e63946; text-decoration: none; font-size: 12px;">matrixcbs.com</a>
           <span style="color: #555; margin: 0 10px;">|</span>
-          <a href="https://www.linkedin.com/company/matrixcbs" style="color: #e63946; text-decoration: none; font-size: 12px;">LinkedIn</a>
+          <a href="https://www.linkedin.com/company/matrix-cbs-kft" style="color: #e63946; text-decoration: none; font-size: 12px;">LinkedIn</a>
         </div>
       </td>
     </tr>

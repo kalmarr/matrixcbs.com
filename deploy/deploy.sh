@@ -499,38 +499,16 @@ sync_restart_pm2() {
     # SSHPASS kornyezeti valtozoval (biztonsagosabb mint -p)
     export SSHPASS="$SSH_PASS"
 
-    # Ellenorzes es ecosystem.config.js letrehozasa ha nincs
+    # PM2 ROOT-kent fut a szerveren, ezert sudo kell!
+    # Egyszeru restart - az ecosystem.config.js mar letezik
     sshpass -e ssh -o StrictHostKeyChecking=no \
         -p "$SSH_PORT" \
         "$SSH_USER@$SSH_HOST" \
-        "cd $REMOTE_PRIVATE && \
-        if [[ ! -f ecosystem.config.js ]]; then
-            echo 'ecosystem.config.js letrehozasa...'
-            cat > ecosystem.config.js << EOFCONFIG
-module.exports = {
-  apps: [{
-    name: 'matrixcbs',
-    script: 'server.js',
-    cwd: '$REMOTE_PRIVATE',
-    instances: 1,
-    autorestart: true,
-    watch: false,
-    max_memory_restart: '500M',
-    log_date_format: 'YYYY-MM-DD HH:mm:ss',
-    env: {
-      NODE_ENV: 'production',
-      PORT: 3001
-    }
-  }]
-};
-EOFCONFIG
-        fi && \
-        pm2 delete matrixcbs 2>/dev/null || true && \
-        pm2 start ecosystem.config.js && \
-        pm2 save && \
-        pm2 list"
+        "echo 'PM2 restart (ROOT)...' && \
+        sudo pm2 restart matrixcbs && \
+        sudo pm2 list"
 
-    log_success "PM2 ujrainditva"
+    log_success "PM2 ujrainditva (ROOT)"
 }
 
 sync_deploy() {

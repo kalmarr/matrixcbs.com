@@ -296,7 +296,7 @@ export default function KapcsolatPage() {
                     <div className="flex items-center gap-4">
                       <span className="text-2xl">🔗</span>
                       <a
-                        href="https://www.linkedin.com/company/matrixcbs"
+                        href="https://www.linkedin.com/company/matrix-cbs-kft"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-[var(--color-text-primary)] hover:text-[var(--color-accent-red)] transition-colors"
