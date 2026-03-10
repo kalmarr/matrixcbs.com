@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-// ClientAnalytics disabled during build - enable after fixing Next.js 16 bug
-// import { ClientAnalytics } from "@/components/ClientAnalytics";
+import { ClientAnalytics } from "@/components/ClientAnalytics";
 
 // Force dynamic rendering for all pages
 export const dynamic = 'force-dynamic';
@@ -134,7 +133,7 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} ${plusJakarta.variable} antialiased bg-[var(--color-bg-dark)] text-[var(--color-text-primary)] matrix-grid grain-overlay`}
       >
-        {/* <ClientAnalytics /> */}
+        <ClientAnalytics />
         {children}
       </body>
     </html>

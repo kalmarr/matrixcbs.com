@@ -7,7 +7,7 @@ import Script from 'next/script';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, Suspense } from 'react';
 
-const GA_MEASUREMENT_ID = 'G-4H0BCH8311';
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || '';
 
 // Track page views when route changes
 function PageViewTracker() {
@@ -27,6 +27,8 @@ function PageViewTracker() {
 }
 
 export function GoogleAnalytics() {
+  if (!GA_MEASUREMENT_ID) return null;
+
   return (
     <>
       {/* Google Analytics Script */}

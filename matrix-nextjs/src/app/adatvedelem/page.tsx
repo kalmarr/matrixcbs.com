@@ -21,7 +21,7 @@ export default function AdatvedelemPage() {
               Adatvédelmi Tájékoztató
             </h1>
             <p className="text-lg text-[var(--color-text-muted)]">
-              Utolsó módosítás: 2026. január
+              Utolsó módosítás: 2026. március
             </p>
           </ScrollReveal>
         </div>
@@ -174,7 +174,8 @@ export default function AdatvedelemPage() {
                   <ul className="list-disc list-inside text-[var(--color-text-secondary)] space-y-2">
                     <li>Ha erre jogszabály kötelez minket</li>
                     <li>Google Analytics szolgáltatás (anonimizált adatok, USA - EU-US Data Privacy Framework alapján)</li>
-                    <li>Tárhelyszolgáltató (Magyarország)</li>
+                    <li>Tárhelyszolgáltató: Contabo GmbH (Aschauer Straße 32a, 81549 München, Németország)</li>
+                    <li>Domain regisztrátor: INTERNET CZ, a.s. (forpsi.hu, Csehország)</li>
                   </ul>
                 </div>
 
