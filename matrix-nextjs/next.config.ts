@@ -1,6 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Egyedi build ID minden buildnél — cache-busting
+  generateBuildId: async () => {
+    return Date.now().toString()
+  },
+
+  // Gzip/Brotli tömörítés
+  compress: true,
+
+  // Turbopack konfiguráció (Next.js 16 top-level)
+  turbopack: {},
+
   // Disable TypeScript errors during build
   typescript: {
     ignoreBuildErrors: true,
@@ -27,6 +38,22 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  // Legacy URL redirects (régi statikus HTML → új Next.js route-ok)
+  redirects: async () => [
+    // Régi HTML oldalak (statusCode: 301 a 308 helyett a jobb SEO kompatibilitásért)
+    { source: '/index.html', destination: '/', statusCode: 301 },
+    { source: '/rolunk.html', destination: '/rolunk/', statusCode: 301 },
+    { source: '/contact.html', destination: '/kapcsolat/', statusCode: 301 },
+    { source: '/trening.html', destination: '/megoldasaink/', statusCode: 301 },
+    { source: '/szolgaltasok.html', destination: '/megoldasaink/', statusCode: 301 },
+    { source: '/szolgaltatasok.html', destination: '/megoldasaink/', statusCode: 301 },
+    // Trailing slash nélküli / ékezet nélküli változatok
+    { source: '/trening', destination: '/megoldasaink/', statusCode: 301 },
+    { source: '/szolgaltasok', destination: '/megoldasaink/', statusCode: 301 },
+    { source: '/szolgaltatasok', destination: '/megoldasaink/', statusCode: 301 },
+    { source: '/contact', destination: '/kapcsolat/', statusCode: 301 },
+  ],
 
   // Security headers
   headers: async () => [
@@ -58,6 +85,18 @@ const nextConfig: NextConfig = {
           value: 'camera=(), microphone=(), geolocation=()',
         },
         {
+          key: 'Cache-Control',
+          value: 'no-cache, no-store, must-revalidate',
+        },
+        {
+          key: 'Pragma',
+          value: 'no-cache',
+        },
+        {
+          key: 'Expires',
+          value: '0',
+        },
+        {
           key: 'Content-Security-Policy',
           value: [
             "default-src 'self'",
@@ -73,6 +112,12 @@ const nextConfig: NextConfig = {
       ],
     },
   ],
+
+  // Build optimalizáció
+  experimental: {
+    turbopackFileSystemCacheForDev: true,
+    optimizePackageImports: ["framer-motion"],
+  },
 };
 
 export default nextConfig;

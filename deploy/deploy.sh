@@ -2,7 +2,7 @@
 
 #===============================================================================
 # MATRIX CBS - Deploy Script
-# Verzio: 2.0
+# Verzio: 2.3
 # Next.js + ISPConfig + PM2
 #
 # Hasznalat: ./deploy.sh [parancs]
@@ -237,9 +237,8 @@ db_pull_remote() {
     log_info "Kapcsolodas: $SSH_USER@$SSH_HOST:$SSH_PORT"
     log_info "Adatbazis: $REMOTE_DB_NAME"
 
-    # SSH-n keresztul mysqldump
-    ssh -o StrictHostKeyChecking=no \
-        -p "$SSH_PORT" \
+    # SSH-n keresztul mysqldump (SSH kulcs alapu auth)
+    ssh -p "$SSH_PORT" \
         "$SSH_USER@$SSH_HOST" \
         "mysqldump -u'$REMOTE_DB_USER' -p'$REMOTE_DB_PASS' --single-transaction --routines --triggers '$REMOTE_DB_NAME'" \
         | gzip > "$backup_file"
@@ -332,8 +331,7 @@ db_push_remote() {
     log_info "Adatbazis feltoltese es visszaallitasa..."
 
     # Dekompressz + SSH-n at import
-    gunzip -c "$local_backup" | ssh -o StrictHostKeyChecking=no \
-        -p "$SSH_PORT" \
+    gunzip -c "$local_backup" | ssh -p "$SSH_PORT" \
         "$SSH_USER@$SSH_HOST" \
         "mysql -u'$REMOTE_DB_USER' -p'$REMOTE_DB_PASS' '$REMOTE_DB_NAME'"
 
@@ -349,8 +347,7 @@ db_remote_backup() {
 
     log_info "Kapcsolodas: $SSH_USER@$SSH_HOST:$SSH_PORT"
 
-    ssh -o StrictHostKeyChecking=no \
-        -p "$SSH_PORT" \
+    ssh -p "$SSH_PORT" \
         "$SSH_USER@$SSH_HOST" \
         "cd /var/www/clients/client0/web1 && mkdir -p backups && mysqldump -u'$REMOTE_DB_USER' -p'$REMOTE_DB_PASS' --single-transaction --routines --triggers '$REMOTE_DB_NAME' | gzip > backups/db_\$(date +%Y%m%d_%H%M%S).sql.gz && ls -lh backups/*.sql.gz | tail -5"
 
@@ -387,6 +384,9 @@ build_project() {
         log_info "node_modules telepitese..."
         npm ci
     fi
+
+    log_info "Regi build torlese..."
+    rm -rf .next/standalone .next/static .next/cache .next/server .next/BUILD_ID .next/build-manifest.json .next/prerender-manifest.json .next/routes-manifest.json 2>/dev/null || true
 
     log_info "Next.js production build..."
     npm run build
@@ -428,10 +428,9 @@ sync_web() {
 
     log_info "Staging konyvtar elkeszult: $(du -sh "$staging_dir" | cut -f1)"
 
-    # Rsync parameterek - SSHPASS kornyezeti valtozoval (biztonsagosabb)
-    export SSHPASS="$SSH_PASS"
+    # Rsync parameterek (SSH kulcs alapu auth)
     local rsync_opts="-avz --delete --exclude-from=$SCRIPT_DIR/.rsync-exclude"
-    local ssh_cmd="sshpass -e ssh -o StrictHostKeyChecking=no -p $SSH_PORT"
+    local ssh_cmd="ssh -p $SSH_PORT"
 
     if [[ "$DRY_RUN" == true ]]; then
         rsync_opts="$rsync_opts --dry-run"
@@ -467,11 +466,10 @@ sync_private() {
     rm -f .next/standalone/.env 2>/dev/null || true
     log_info ".env torolve standalone-bol (vedelem)"
 
-    # Rsync parameterek - SSHPASS kornyezeti valtozoval (biztonsagosabb)
+    # Rsync parameterek (SSH kulcs alapu auth)
     # FONTOS: --exclude opciok MINDIG a --delete ELOTT kell legyenek!
-    export SSHPASS="$SSH_PASS"
-    local rsync_opts="-avz --exclude='.env' --exclude='ecosystem.config.js' --exclude='node_modules' --exclude='backups/' --exclude='logs/' --delete"
-    local ssh_cmd="sshpass -e ssh -o StrictHostKeyChecking=no -p $SSH_PORT"
+    local rsync_opts="-avz --exclude='.env' --exclude='ecosystem.config.js' --exclude='scripts/' --exclude='node_modules' --exclude='backups/' --exclude='logs/' --delete"
+    local ssh_cmd="ssh -p $SSH_PORT"
 
     if [[ "$DRY_RUN" == true ]]; then
         rsync_opts="$rsync_opts --dry-run"
@@ -496,19 +494,18 @@ sync_restart_pm2() {
 
     log_info "SSH kapcsolodas: $SSH_USER@$SSH_HOST:$SSH_PORT"
 
-    # SSHPASS kornyezeti valtozoval (biztonsagosabb mint -p)
-    export SSHPASS="$SSH_PASS"
-
-    # PM2 ROOT-kent fut a szerveren, ezert sudo kell!
-    # Egyszeru restart - az ecosystem.config.js mar letezik
-    sshpass -e ssh -o StrictHostKeyChecking=no \
-        -p "$SSH_PORT" \
+    # PM2 web1 userrel fut (defaultmatrixCBS SSH user = web1)
+    # Cache torles + restart - az ecosystem.config.js mar letezik
+    ssh -p "$SSH_PORT" \
         "$SSH_USER@$SSH_HOST" \
-        "echo 'PM2 restart (ROOT)...' && \
-        sudo pm2 restart matrixcbs && \
-        sudo pm2 list"
+        "echo 'Next.js cache torles...' && \
+        rm -rf /var/www/clients/client0/web1/private/.next/cache && \
+        echo 'PM2 restart (web1)...' && \
+        pm2 restart matrixcbs && \
+        pm2 save && \
+        pm2 list"
 
-    log_success "PM2 ujrainditva (ROOT)"
+    log_success "PM2 ujrainditva (web1)"
 }
 
 sync_deploy() {
@@ -523,11 +520,6 @@ sync_deploy() {
     # Ellenorzesek
     if ! command -v rsync &> /dev/null; then
         log_error "rsync nincs telepitve! (sudo apt install rsync)"
-        exit 1
-    fi
-
-    if ! command -v sshpass &> /dev/null; then
-        log_error "sshpass nincs telepitve! (sudo apt install sshpass)"
         exit 1
     fi
 
@@ -633,38 +625,27 @@ pack_project() {
 }
 
 #-------------------------------------------------------------------------------
-# FTP Feltoltes
+# SSH Feltoltes
 #-------------------------------------------------------------------------------
 
-upload_ftp() {
-    log_step "FTP feltoltes"
+upload_ssh() {
+    log_step "SSH feltoltes (rsync/scp)"
 
-    if ! command -v lftp &> /dev/null; then
-        log_error "lftp nincs telepitve! (sudo apt install lftp)"
-        exit 1
+    log_info "Feltoltes: $SSH_USER@$SSH_HOST:$SSH_PORT -> tmp/"
+
+    local ssh_cmd="ssh -p $SSH_PORT"
+
+    rsync -az -e "$ssh_cmd" \
+        "$TMP_DIR/web.tar.gz" \
+        "$TMP_DIR/private.tar.gz" \
+        "$TMP_DIR/deploy-server.sh" \
+        "$SSH_USER@$SSH_HOST:tmp/"
+
+    if [[ -f "$TMP_DIR/.env" ]]; then
+        rsync -az -e "$ssh_cmd" "$TMP_DIR/.env" "$SSH_USER@$SSH_HOST:tmp/"
     fi
 
-    log_info "Kapcsolodas: $FTP_HOST..."
-
-    lftp -c "
-        set ssl:verify-certificate no
-        set ftp:ssl-force true
-        set ftp:ssl-protect-data true
-        set ftp:passive-mode true
-        set net:timeout 30
-        set net:max-retries 3
-
-        open -u $FTP_USER,$FTP_PASS ftp://$FTP_HOST
-
-        cd tmp
-        put $TMP_DIR/web.tar.gz
-        put $TMP_DIR/private.tar.gz
-        put $TMP_DIR/deploy-server.sh
-        $(if [[ -f "$TMP_DIR/.env" ]]; then echo "put $TMP_DIR/.env"; fi)
-        bye
-    "
-
-    log_success "FTP feltoltes kesz"
+    log_success "SSH feltoltes kesz"
 }
 
 #-------------------------------------------------------------------------------
@@ -674,17 +655,9 @@ upload_ftp() {
 run_remote_deploy() {
     log_step "Tavoli deploy futtatasa (SSH)"
 
-    if ! command -v sshpass &> /dev/null; then
-        log_error "sshpass nincs telepitve! (sudo apt install sshpass)"
-        exit 1
-    fi
-
     log_info "SSH kapcsolodas: $SSH_USER@$SSH_HOST:$SSH_PORT..."
 
-    # SSHPASS kornyezeti valtozoval (biztonsagosabb mint -p)
-    export SSHPASS="$SSH_PASS"
-    sshpass -e ssh -o StrictHostKeyChecking=no \
-        -p "$SSH_PORT" \
+    ssh -p "$SSH_PORT" \
         "$SSH_USER@$SSH_HOST" \
         "cd /var/www/clients/client0/web1/tmp && chmod +x deploy-server.sh && ./deploy-server.sh"
 
@@ -712,7 +685,7 @@ full_deploy() {
     local start_time=$(date +%s)
 
     pack_project
-    upload_ftp
+    upload_ssh
     run_remote_deploy
 
     local end_time=$(date +%s)
@@ -730,7 +703,7 @@ full_deploy() {
 
 show_help() {
     echo ""
-    echo -e "${CYAN}MATRIX CBS - Deploy Script v2.2${NC}"
+    echo -e "${CYAN}MATRIX CBS - Deploy Script v2.3${NC}"
     echo ""
     echo -e "${YELLOW}Hasznalat:${NC} ./deploy.sh <parancs>"
     echo ""
@@ -748,8 +721,8 @@ show_help() {
     echo "  deploy      - Teljes deploy tar.gz-vel (lassabb)"
     echo "  build       - Csak build"
     echo "  pack        - Csak csomagolas"
-    echo "  upload      - Csak FTP feltoltes"
-    echo "  ssh         - Csak SSH deploy"
+    echo "  upload      - Csak SSH feltoltes"
+    echo "  ssh         - Csak SSH deploy (deploy-server.sh)"
     echo ""
     echo -e "${GREEN}ADATBAZIS:${NC}"
     echo "  db:backup   - Lokalis adatbazis backup"
@@ -785,7 +758,7 @@ case "${1:-}" in
     deploy)      full_deploy ;;
     build)       build_project ;;
     pack)        pack_project; trap - EXIT ;;
-    upload)      upload_ftp ;;
+    upload)      upload_ssh ;;
     ssh)         run_remote_deploy ;;
 
     # Adatbazis
