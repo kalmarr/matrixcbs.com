@@ -1,10 +1,11 @@
-# CLAUDE.md — Univerzális projekt sablon
+# CLAUDE.md — Univerzális projekt sablon (Laravel + Next.js)
 
 ## Nyelv és kommunikáció
 - Kód kommentek (PHPDoc/JSDoc): angolul
 - Inline kommentek, üzleti logika magyarázat: magyarul
 - Commit üzenetek: magyarul, Conventional Commits formátumban
 - Válaszok, magyarázatok: magyarul
+- TODO/FIXME: angolul
 
 ## Fájl megnyitási protokoll
 Mielőtt BÁRMIT módosítanál egy fájlban:
@@ -22,7 +23,8 @@ Mielőtt BÁRMIT módosítanál egy fájlban:
 - NE kérd a felhasználót, hogy ellenőrizze — amit tudsz ellenőrizni, azt TE ellenőrizd
 - Konzol hiba → futtasd a kódot / ellenőrizd a logot, amíg van hiba, addig javíts
 - Teszt hiba → futtasd a tesztet, amíg piros, addig javíts
-- Szintaktikai hiba → futtass linter-t / php artisan route:list-et
+- **Laravel**: Szintaktikai hiba → futtass linter-t / `php artisan route:list`-et
+- **Next.js**: TypeScript hiba → `npx tsc --noEmit`, Build hiba → `npm run build`
 - Addig iterálj, amíg a hiba BIZONYÍTOTTAN megszűnt
 
 ### Éles szerver vs lokális fejlesztés
@@ -32,27 +34,40 @@ Mielőtt BÁRMIT módosítanál egy fájlban:
 - Ha lokális szerveren dolgozok (fejlesztek, tesztelek, stb.), akkor éles szerveren SOHA ne módosíts közvetlenül, csak deploy-on keresztül, ha kérlek
 
 ### Deploy protokoll — KÖTELEZŐ
-- **SOHA ne SCP-zz/tölts fel egyedi fájlokat az élesre deploy nélkül** — ez inkonzisztens állapotot okoz (view cache, route cache, opcache nem szinkronizálódik)
-- Ha éles hibát kell javítani: lokálisan javíts → commitolj → `./deploy.sh deploy`
-- **Deploy ELŐTT** lokális tesztek KÖTELEZŐEK: `php artisan test`, `pint --test`, `bash -n deploy.sh`
-- **Deploy UTÁN** kötelező verifikáció (a deploy script automatikusan végzi, de manuálisan is ellenőrizd):
-  - Smoke test: `curl` minden kritikus URL-re (`/`, `/admin`, stb.) → nincs 500
-  - Route validáció: `php artisan route:list` hiba nélkül fut az élesben
-  - Laravel log: nincs friss ERROR a `storage/logs/laravel.log`-ban
-- **View cache + opcache összefüggés**: a `view:clear` törli a compiled fájlokat a lemezről, de az opcache memóriájában maradnak → `opcache_reset()` KÖTELEZŐ a `view:clear` után (a deploy script automatikusan kezeli)
+- **SOHA ne SCP-zz/tölts fel egyedi fájlokat az élesre deploy nélkül** — ez inkonzisztens állapotot okoz
+- Ha éles hibát kell javítani: lokálisan javíts → commitolj → deploy
+- Ha deploy-t kérek, **AZONNAL deployolj** — NE futtass teszteket előtte, NE kérdezz vissza
+- **MINDEN ellenőrzés DEPLOY UTÁN történik**, deploy előtt SEMMI
 - Ha a deploy script health check WARN-t ad → AZONNAL vizsgáld meg, ne hagyd figyelmen kívül
 
-### Deploy befejezésének feltétele
-- Git push ÖNMAGÁBAN NEM jelenti, hogy a feladat kész — MINDIG futtasd a deploy utáni ellenőrzést
-- Ha HTTP health check 500-at ad → vizsgáld meg a laravel.log-ot → javíts → deploy újra → ellenőrizd újra
-- Egy deploy CSAK AKKOR van kész, ha:
-  1. Minden cache törölve és újraépítve (config, route, view, opcache)
-  2. Migration-ök hiba nélkül lefutottak
-  3. `curl` HTTP 200/302-t ad minden kritikus URL-re
-  4. Nincs friss ERROR a `storage/logs/laravel.log`-ban
-- Ha BÁRMELYIK lépés hibázik → írd le a PONTOS hibát → javítsd → kezd elölről az 1. lépéstől
+#### Laravel deploy ellenőrzés
+- Smoke test: `curl` minden kritikus URL-re (`/`, `/admin`, stb.) → nincs 500
+- Route validáció: `php artisan route:list` hiba nélkül fut az élesben
+- Laravel log: nincs friss ERROR a `storage/logs/laravel.log`-ban
+- Cache: config, route, view, opcache törölve és újraépítve
+- Migration-ök hiba nélkül lefutottak
+- **View cache + opcache összefüggés**: a `view:clear` törli a compiled fájlokat a lemezről, de az opcache memóriájában maradnak → `opcache_reset()` KÖTELEZŐ a `view:clear` után
 
-### View Cache szabályok
+#### Next.js deploy ellenőrzés
+- Lokálisan: `npm run build` hiba nélkül lefut
+- Szerveren: rsync standalone + static fájlok, PM2 restart
+- Smoke test: `curl -sI http://127.0.0.1:PORT/` és `curl -sI https://domain.com/` → 200 OK
+- PM2 státusz: `pm2 status` — a process fut
+- PM2 logok: `pm2 logs [name] --lines 20` — nincs friss hiba
+
+### Deploy befejezésének feltétele
+- Ha deploy parancsot kapok, **AZONNAL deployolj** — deploy ELŐTT SEMMILYEN teszt NEM kell
+- Git push ÖNMAGÁBAN NEM jelenti, hogy a feladat kész — MINDEN ellenőrzés DEPLOY UTÁN történik
+- Egy deploy CSAK AKKOR van kész, ha:
+  1. `curl` HTTP 200/302-t ad minden kritikus URL-re — az oldal BETÖLT az éles szerveren
+  2. Nincs friss hiba a logokban
+  3. Konzol logban **0 hiba** van (nincs JS error, nincs 500, nincs warning)
+- Addig a ciklus: **ellenőrizd → ha hiba van, javítsd → deployolj újra → ellenőrizd újra**
+- Ez a ciklus NEM áll meg, amíg az ÖSSZES feltétel nem teljesül
+- NE írd ki, hogy "kész" vagy "ok" amíg az ÖSSZES ellenőrzés nem zöld
+- NE kérd a felhasználót, hogy nézze meg — amit tudsz ellenőrizni, azt TE ellenőrizd
+
+#### Laravel-specifikus cache szabályok
 - `view:cache` SOHA nem fut exception handler-ben (bootstrap/app.php)
 - Production deploy után: `view:clear` futtatása KÖTELEZŐ, `view:cache` OPCIONÁLIS
 - Ha `view:cache` hibát dob deploy közben → ne álljon meg a deploy, lazy compilation fog működni
@@ -60,75 +75,82 @@ Mielőtt BÁRMIT módosítanál egy fájlban:
 
 ### Ha elakadtál
 - Ha 2-3 iteráció után sem sikerül a javítás, használj MCP eszközöket
-- ELSŐ lépés: ref.tools MCP — keress rá a hibaüzenetre, a használt csomag dokumentációjára, vagy a Laravel/Livewire releváns szekciójára
-- Ha a ref.tools nem ad eredményt, használj Brave Search MCP-t vagy más elérhető MCP-t
+- ELSŐ lépés: ref.tools MCP — keress rá a hibaüzenetre vagy a csomag dokumentációjára
 - SOHA ne találgass vakon — előbb nézz utána, utána javíts
 
 ## Kommentelési szabályok
 
-### PHP osztályok (Model, Controller, Service, Request, Middleware, stb.)
-- Osztály fejlécébe PHPDoc: egysoros leírás, kapcsolódó osztályok ha releváns
-- Publikus metódushoz PHPDoc: @param, @return, @throws, egysoros cél
-- Privát/protected metódushoz is PHPDoc, ha nem triviális
+### Közös szabályok
 - Komplex üzleti logikánál MINDIG magyar inline komment a döntés okával
 - Workaround-oknál hivatkozz a problémára (pl. "// SMTP limit miatt...")
 - If/else ágaknál kommentáld miért kell az adott ág, ha nem egyértelmű
 
-### Laravel specifikus
+### Amit NE kommentálj
+- Triviális getter/setter, egyértelmű értékadás
+- Framework standard konvenciók szerinti műveletek
+- Típusdefiníciók amik önmagukat dokumentálják
+
+### Komment karbantartás
+- Logika módosul → komment KÖTELEZŐEN frissül
+- Törölt kód → hozzá tartozó komment is törlődik, SOHA ne maradjon árva komment
+- PHPDoc/JSDoc @param/@return MINDIG egyezzen a metódus/függvény szignatúrájával
+- SOHA ne hagyj elavult kommentet — az rosszabb, mint ha nincs
+
+### Duplikáció elkerülése
+- Ha egy fájlban MÁR VAN PHPDoc/JSDoc komment, NE adj hozzá újat — FRISSÍTSD a meglévőt
+- Mielőtt kommentet írsz, MINDIG ellenőrizd, van-e már komment az adott elemnél
+- SOHA ne legyen két doc blokk egymás alatt ugyanahhoz az elemhez
+
+### Laravel (PHP/Blade)
+- Osztály fejlécébe PHPDoc: egysoros leírás, kapcsolódó osztályok ha releváns
+- Publikus metódushoz PHPDoc: @param, @return, @throws, egysoros cél
+- Privát/protected metódushoz is PHPDoc, ha nem triviális
 - Route fájlok: csoportonként komment a csoport céljáról
 - Migration: minden mező mellett rövid komment a szerepéről
 - Form Request: validációs szabályok mellé komment ha nem egyértelmű
 - Config/.env.example: minden változó magyarázata
-- Middleware: milyen esetben fut, mit csinál
-
-### Blade template-ek
-- Szekciók elején és végén HTML jelölő:
-  `<!-- SZEKCIÓ: [név] kezdete -->` / `<!-- SZEKCIÓ: [név] vége -->`
+- Blade template-ek: szekciók elején és végén HTML jelölő (`<!-- SZEKCIÓ: [név] kezdete/vége -->`)
 - Komplex @if/@foreach feltételeknél kommentáld a célt
-- Partial/component beillesztésnél kommentáld mit húz be és miért
 
-### JavaScript / CSS
-- JS függvényekhez JSDoc (cél, paraméterek, visszatérés)
-- Komplex DOM manipulációknál kommentáld a szándékot
-- CSS szekciónként komment ha nem egyértelmű miért kell
-
-### Amit NE kommentálj
-- Triviális getter/setter (hacsak nincs bennük logika)
-- Egyértelmű értékadás ($i++, $name = $user->name)
-- Laravel standard konvenciók szerinti műveletek
-
-### Komment karbantartás
-- Logika módosul → komment KÖTELEZŐEN frissül
-- Mező szerepe változik → komment frissül
-- Törölt kód → hozzá tartozó komment is törlődik, SOHA ne maradjon árva komment
-- Áthelyezett kód → régi helyen lévő komment törlendő
-- Blade szekció-jelölők MINDIG párosak maradjanak (kezdete + vége)
-- PHPDoc @param/@return MINDIG egyezzen a metódus szignatúrájával
-- SOHA ne hagyj elavult kommentet — az rosszabb, mint ha nincs
-
-### Duplikáció elkerülése
-- Ha egy fájlban MÁR VAN PHPDoc komment, NE adj hozzá újat — FRISSÍTSD a meglévőt
-- Mielőtt kommentet írsz, MINDIG ellenőrizd, van-e már komment az adott osztálynál/metódusnál
-- Ha a meglévő komment pontatlan vagy hiányos, CSERÉLD ki (töröld a régit, írd az újat)
-- SOHA ne legyen két PHPDoc blokk egymás alatt ugyanahhoz az elemhez
-- Ugyanez vonatkozik Blade szekció-jelölőkre és JSDoc blokkokra is
+### Next.js (TypeScript/React)
+- React komponensekhez JSDoc: egysoros leírás, @param props felsorolás
+  ```typescript
+  /**
+   * Displays a reference card with company logo and description.
+   *
+   * @param props - Component properties
+   * @param props.title - Company or project name
+   * @param props.description - Brief description
+   */
+  export function ReferenceCard({ title, description }: Props) {
+  ```
+- TypeScript interface-ekhez/típusokhoz JSDoc, ha nem önmagukat dokumentálják
+- API route-okhoz komment a végpont céljáról és autentikációs követelményéről
+- Komplex hook-oknál JSDoc a cél és visszatérési érték dokumentálásához
 
 ## Kódolási konvenciók
 
 ### Alapelvek
-- DRY: ne ismételd magad, használj trait-eket, service-eket, helper-eket
+- DRY: ne ismételd magad, használj közös komponenseket, hook-okat, utility-ket, service-eket
 - KISS: a legegyszerűbb működő megoldás az első választás
-- Egy metódus = egy felelősség, max ~30 sor
+- Egy függvény/metódus = egy felelősség
 - Magic number-ök helyett konstansok vagy config értékek
-- Hardcoded string-ek helyett nyelvi fájlok (lang/) vagy config
 
-### Elnevezések
+### Elnevezések — közös
+- Adatbázis táblák, mezők: snake_case (users, created_at)
+- Route-ok: kebab-case (user-profile, dental-listings)
+- Konstansok: UPPER_SNAKE_CASE (MAX_UPLOAD_SIZE)
+
+### Elnevezések — Laravel
 - Osztályok: PascalCase (ListingController, DentalAd)
 - Metódusok, változók: camelCase (getActiveListings, $userRole)
-- Adatbázis táblák, mezők: snake_case (dental_listings, created_at)
-- Route-ok: kebab-case (dental-listings, user-profile)
 - Config kulcsok: snake_case ponttal (app.listing_limit)
-- Konstansok: UPPER_SNAKE_CASE (MAX_UPLOAD_SIZE)
+
+### Elnevezések — Next.js
+- Komponensek, típusok, interface-ek: PascalCase (ReferenceCard, TrainingProps)
+- Függvények, változók, hook-ok: camelCase (getTrainings, useContactForm)
+- Route mappák, fájlok: kebab-case (src/app/adatvedelem/page.tsx)
+- CSS class-ek: Tailwind utility-k, egyedi class: kebab-case
 
 ### Laravel konvenciók
 - Skinny Controller — üzleti logika Service osztályokba
@@ -139,24 +161,61 @@ Mielőtt BÁRMIT módosítanál egy fájlban:
 - Event/Listener a laza csatoláshoz ahol értelmes
 - Queued Job hosszú futású műveletekhez
 
-### Frontend
+### Laravel frontend
 - Blade component-ek újrahasználható UI elemekhez
 - Alpine.js vagy Livewire interaktivitáshoz (ne jQuery ha elkerülhető)
 - Tailwind utility class-ek, egyedi CSS csak ha szükséges
 - Képek: WebP formátum, lazy loading, responsive méretezés
 
+### Next.js konvenciók
+- **App Router**: minden route a `src/app/` alatt, `page.tsx` / `layout.tsx` / `loading.tsx`
+- **Server Components** alapértelmezetten — `'use client'` csak ha kell (interaktivitás, hook-ok)
+- **API Routes**: `src/app/api/` alatt, `route.ts` fájlokban
+- **Metadata**: `generateMetadata()` vagy statikus `metadata` export minden oldalon
+- **Image**: Next.js `<Image>` komponens, `priority` a fold feletti képeknél
+- **Link**: Next.js `<Link>` komponens belső navigációhoz
+- **Validáció**: Zod sémákkal az API route-okban
+- **Stílus**: Tailwind CSS utility class-ek
+
+## UTF-8 és Magyar Ékezetek
+
+**KRITIKUS:** A teljes projektben kötelező az UTF-8 kódolás és a magyar ékezetek helyes kezelése!
+
+### API Response-ok
+- Minden API response-nak tartalmaznia kell a `charset=utf-8` headert
+- Használj helper függvényeket a response-okhoz, ha elérhetőek
+
+### Adatbázis
+- A DATABASE_URL / connection config tartalmazzon `charset=utf8mb4` paramétert
+- Collation: `utf8mb4_unicode_ci` (MySQL) vagy megfelelő UTF-8 collation
+
+### String manipuláció
+- **NE használj** `.charAt()`, `.substring()` (JS) vagy hasonló byte-alapú függvényeket magyar szövegen
+- Használj Unicode-safe string műveleteket (pl. spread operator, `Array.from()`, vagy dedikált utility-k)
+
 ## Biztonság
-- SOHA ne commitolj .env fájlt, API kulcsot, jelszót, titkos tokent
-- Ha új titkos értéket vezetsz be, CSAK az .env.example-be kerüljön üres/példa értékkel
-- .gitignore-ban MINDIG ellenőrizd, hogy benne van: .env, storage/, node_modules/, *.log
+
+### Közös szabályok
+- SOHA ne commitolj `.env` fájlt, API kulcsot, jelszót, titkos tokent
+- Ha új titkos értéket vezetsz be, CSAK az `.env.example`-be kerüljön üres/példa értékkel
+- `.gitignore`-ban MINDIG ellenőrizd: `.env*`, `node_modules/`, logfájlok
 - Ha véletlenül commitolva lett érzékeny adat, NE csak töröld — jelezd, mert a git history-ban megmarad
-- Külső API kulcsokat config/services.php + env() kombóval kezeld, soha ne hardcode-old
+- Fájl feltöltés: típus + méret validálás
+
+### Laravel biztonság
+- Külső API kulcsokat `config/services.php` + `env()` kombóval kezeld
 - Minden user input: validálás (Form Request) + sanitizálás
 - SQL: MINDIG Eloquent vagy Query Builder, soha raw query validálatlan inputtal
-- XSS: Blade-ben {{ }} (escaped), {!! !!} csak ha 100% biztonságos a tartalom
-- CSRF: minden POST/PUT/DELETE form-ban @csrf
-- Mass assignment: $fillable MINDIG explicit, $guarded csak indokolt esetben
-- Fájl feltöltés: típus + méret validálás, SOHA ne tárold public/-ban közvetlenül
+- XSS: Blade-ben `{{ }}` (escaped), nyers HTML renderelés csak ha 100% biztonságos
+- CSRF: minden POST/PUT/DELETE form-ban `@csrf`
+- Mass assignment: `$fillable` MINDIG explicit, `$guarded` csak indokolt esetben
+
+### Next.js biztonság
+- API route-okban: Zod séma validáció minden bemenetre
+- XSS: React alapból escaped, nyers HTML renderelés csak ha 100% biztonságos és sanitizált (pl. DOMPurify)
+- Szerver-oldali validálás az API route-ban — kliens-oldali validálás NEM elég
+- Auth middleware/guard az admin route-okhoz
+- `.env*` fájlok gitignore-ban, `NEXT_PUBLIC_` prefix csak publikus értékekhez
 
 ## Jelszókezelés
 - Jelszavaknál MINDIG engedélyezd a speciális karaktereket
@@ -165,57 +224,76 @@ Mielőtt BÁRMIT módosítanál egy fájlban:
 - Minimum hossz: 8 karakter, maximum: 255
 
 ## Hibakezelés
-- Try-catch ahol exception várható, MINDIG specifikus exception típusokkal
+- Try-catch ahol exception várható, MINDIG specifikus exception/error típusokkal
 - Soha ne nyelj el hibát üres catch blokkal
-- Log::error() minden elkapott hibánál kontextussal (user_id, request, stb.)
+- Logolj minden elkapott hibánál kontextussal (user_id, request, stb.)
 - Felhasználónak: barátságos magyar hibaüzenet
 - Fejlesztőnek: részletes log a háttérben
 - Éles környezetben: soha ne mutass stack trace-t a felhasználónak
 
 ## Adatbázis
 - Migration MINDEN sémaváltozáshoz — kézi DB módosítás TILOS
-- Seeder a tesztadatokhoz, Factory a tesztekhez
+- **Laravel**: Seeder a tesztadatokhoz, Factory a tesztekhez
+- **Next.js (Prisma)**: Seed script, `prisma migrate dev` fejlesztéshez, `prisma migrate deploy` élesben
 - Index a gyakran keresett/szűrt mezőkre
 - Soft delete ahol az adat visszaállítható kell legyen
 - Foreign key constraint-ek a referenciális integritáshoz
 
 ## Tesztelés
+
+### Laravel
 - Feature test minden API endpoint-hoz / route-hoz
 - Unit test komplex üzleti logikához (Service, Model metódusok)
-- Tesztnév: test_[mit_csinál]_[milyen_körülmények_közt] (snake_case)
+- Tesztnév: `test_[mit_csinál]_[milyen_körülmények_közt]` (snake_case)
+
+### Next.js
+- API route tesztek (request/response validáció)
+- Komponens tesztek React Testing Library-vel ha szükséges
+- E2E tesztek Playwright-tal kritikus user flow-khoz
+
+### Közös
 - Arrange-Act-Assert (AAA) struktúra minden tesztben
-- Tesztadatok: Factory és Faker, SOHA ne használj éles adatot
-- Assertion-ök legyenek specifikusak, ne csak assertTrue()
+- Tesztadatok: Factory/Faker/fixture, SOHA ne használj éles adatot
+- Assertion-ök legyenek specifikusak
 
 ## Fejlesztés utáni biztonsági ellenőrzés
 Minden fejlesztési feladat BEFEJEZÉSE után, commit ELŐTT végezd el a biztonsági ellenőrzést.
-- Automatikus: route ellenőrzés, raw query/debug kód keresés, Semgrep
-- Manuális: middleware, authorize(), $fillable/$hidden, rate limiting, .env.example
-- Érzékeny területeknél (auth, payment, user data): CSRF, SQL injection, XSS, Policy/Gate
+- Automatikus: route ellenőrzés, debug kód keresés, Semgrep ha elérhető
+- Manuális: auth guard/middleware, input validáció, .env.example naprakész
+- Érzékeny területeknél (auth, payment, user data): injection, XSS, jogosultságkezelés
 
-> Részletes checklist és parancsok: docs/security-checklist.md
+> Részletes checklist: docs/security-checklist.md
 
 ## Teljesítmény
-- N+1 query: MINDIG with() eager loading ahol relationship-et használsz
+
+### Laravel
+- N+1 query: MINDIG `with()` eager loading ahol relationship-et használsz
 - Cache gyakran lekért, ritkán változó adatot (config, beállítások)
 - Pagination nagy listáknál (soha ne tölts be mindent egyszerre)
 - Queue (Job) email küldéshez, fájl feldolgozáshoz, nehéz számításokhoz
-- Lazy collection nagy adathalmazoknál (cursor() vagy lazy())
+- Lazy collection nagy adathalmazoknál (`cursor()` vagy `lazy()`)
+
+### Next.js
+- Server Components alapértelmezetten — kliens-oldali JS minimalizálása
+- `force-dynamic` csak ahol valóban szükséges, ISR/revalidate ahol lehetséges
+- Next.js `<Image>` komponens automatikus optimalizálással (ha `sharp` elérhető)
+- Prisma `include`/`select` — csak a szükséges mezőket kérd le
+- `loading.tsx` skeleton-ok a jobb UX-ért
 
 ## Git konvenciók
 
 ### Conventional Commits formátum
-- feat(scope): új funkció (pl. `feat(listing): hirdetés szűrő hozzáadása`)
-- fix(scope): hibajavítás (pl. `fix(auth): bejelentkezési hiba javítása`)
-- refactor(scope): kód átszervezés, viselkedés változás nélkül
-- style(scope): formázás, kommentelés, whitespace
-- docs(scope): dokumentáció módosítás
-- test(scope): teszt hozzáadás/módosítás
-- chore(scope): build, config, dependency változás
-- Breaking change: feat(scope)!: leírás
+- `feat(scope)`: új funkció (pl. `feat(blog): blog oldal hozzáadása`)
+- `fix(scope)`: hibajavítás (pl. `fix(auth): bejelentkezési hiba javítása`)
+- `refactor(scope)`: kód átszervezés, viselkedés változás nélkül
+- `style(scope)`: formázás, kommentelés, whitespace
+- `docs(scope)`: dokumentáció módosítás
+- `test(scope)`: teszt hozzáadás/módosítás
+- `chore(scope)`: build, config, dependency változás
+- Breaking change: `feat(scope)!:` leírás
 
 ### Branch elnevezés
-- feature/[rövid-leírás], fix/[rövid-leírás], refactor/[rövid-leírás]
+- `feature/[rövid-leírás]`, `fix/[rövid-leírás]`, `refactor/[rövid-leírás]`
 
 ### Egyéb szabályok
 - Egy commit = egy logikai egység
@@ -232,8 +310,8 @@ Komplex feladatoknál MINDIG használj több párhuzamos Claude Code ügynököt
 > Részletes ügynök felosztás, TMUX parancsok és indítási sablon: docs/multi-agent-workflow.md
 
 ## Fájl és mappastruktúra
-- Tartsd be a Laravel standard struktúrát
-- Új modul = új almappa az app/ alatt ha indokolt (pl. app/Services/Listing/)
+- **Laravel**: Tartsd be a Laravel standard struktúrát, új modul = új almappa az `app/` alatt
+- **Next.js**: App Router struktúra a `src/app/` alatt, komponensek `src/components/`, utility-k `src/lib/`
 - Részletes struktúra: docs/architecture.md (ha létezik)
 
 ## Külső dokumentáció hivatkozások
