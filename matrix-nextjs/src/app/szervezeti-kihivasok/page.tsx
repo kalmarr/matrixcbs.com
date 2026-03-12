@@ -64,13 +64,13 @@ export default function SzervezetiKihivasokPage() {
   return (
     <MainLayout>
       {/* Hero Section */}
-      <section className="relative min-h-[32vh] lg:min-h-[60vh] overflow-hidden">
+      <section className="relative min-h-[55vh] lg:min-h-[60vh] overflow-hidden">
         <GradientMesh variant="subtle" />
 
         <div className="max-w-[var(--max-content-width)] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 min-h-[32vh] lg:min-h-[60vh]">
+          <div className="grid lg:grid-cols-2 gap-12 min-h-[55vh] lg:min-h-[60vh]">
             {/* Expert Image - Kalmár Róbert - kép alja a szekció aljához */}
-            <div className="hidden lg:flex items-end justify-center order-2 lg:order-1">
+            <ScrollReveal animation="fadeInLeft" className="hidden lg:flex items-end justify-center order-2 lg:order-1">
               <div className="relative w-full max-w-lg">
                 <Image
                   src="/images/founders/Kalmar_Robert_Szerkesztve.png"
@@ -81,7 +81,7 @@ export default function SzervezetiKihivasokPage() {
                   priority
                 />
               </div>
-            </div>
+            </ScrollReveal>
 
             {/* Text content */}
             <ScrollReveal className="text-center lg:text-left order-1 lg:order-2 flex flex-col items-center lg:items-start pt-6 pb-2 lg:py-20">
@@ -92,17 +92,17 @@ export default function SzervezetiKihivasokPage() {
             </ScrollReveal>
 
             {/* Mobile Expert Image - Kalmár Róbert - section aljára pozícionálva */}
-            <div className="flex lg:hidden absolute bottom-0 left-1/2 -translate-x-1/2 z-20">
+            <ScrollReveal animation="fadeInUp" className="flex lg:hidden absolute bottom-0 left-1/2 -translate-x-1/2 z-20">
               <Image
                 src="/images/founders/Kalmar_Robert_Szerkesztve.png"
                 alt="Kalmár Róbert - szakértő"
-                width={450}
-                height={300}
-                className="max-w-sm w-full h-auto"
+                width={700}
+                height={467}
+                className="w-[90vw] max-w-[600px] h-auto"
                 loading="eager"
                 priority
               />
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>

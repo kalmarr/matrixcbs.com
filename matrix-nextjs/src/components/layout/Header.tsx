@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { menuSlide, fadeInDown } from '@/lib/animations';
+import { useAnimateOnMount } from '@/hooks/useAnimateOnMount';
 
 const navLinks = [
   { href: '/', label: 'Főoldal' },
@@ -19,6 +20,7 @@ const navLinks = [
 ];
 
 export function Header() {
+  const controls = useAnimateOnMount();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -55,8 +57,8 @@ export function Header() {
             ? 'bg-[var(--color-bg-dark)]/95 backdrop-blur-md shadow-[var(--shadow-md)]'
             : 'bg-transparent'
         )}
-        initial="hidden"
-        animate="visible"
+        initial={false}
+        animate={controls}
         variants={fadeInDown}
       >
         <div className="max-w-[var(--max-content-width)] mx-auto px-4 sm:px-6 lg:px-8 h-full">

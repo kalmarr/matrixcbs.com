@@ -1,5 +1,10 @@
 # MATRIX CBS - Apache Configuration
 
+# Statikus fájlok kiszolgálása közvetlenül (ISPConfig PHP handler megkerülése)
+<FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|webp|json|map|txt|xml)$">
+    SetHandler default-handler
+</FilesMatch>
+
 # MIME Types
 <IfModule mod_mime.c>
     AddType application/javascript .js
@@ -88,11 +93,7 @@
     RewriteRule ^ - [L]
 
     # -----------------------------------------
-    # 5. Proxy everything else to Next.js
+    # 5. Proxy - a vhost kezeli (Apache Directives)
     # -----------------------------------------
-    RewriteRule ^(.*)$ http://127.0.0.1:3001/$1 [P,L]
-</IfModule>
-
-<IfModule mod_proxy.c>
-    ProxyPreserveHost On
+    # RewriteRule eltávolítva - a vhost RewriteRule proxy-z
 </IfModule>

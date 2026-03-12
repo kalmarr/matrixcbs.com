@@ -79,6 +79,8 @@ export function Footer() {
                 alt="MATRIX CBS Kft."
                 width={140}
                 height={28}
+                className="w-auto h-auto"
+                loading="eager"
                 unoptimized
               />
             </Link>

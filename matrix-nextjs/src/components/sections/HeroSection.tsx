@@ -7,26 +7,40 @@ import { Button } from '@/components/ui/Button';
 import { GradientMesh } from '@/components/effects/GradientMesh';
 import { FloatingShapes } from '@/components/effects/FloatingShapes';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
+import { useAnimateOnMount } from '@/hooks/useAnimateOnMount';
+
+// Képek variant definíciók a useAnimateOnMount hook-hoz
+const mobileImageVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.3 } },
+};
+
+const desktopImageVariants = {
+  hidden: { opacity: 0, x: 30 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.5, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] } },
+};
 
 export function HeroSection() {
+  const controls = useAnimateOnMount();
+
   return (
-    <section className="relative min-h-[90vh]">
+    <section className="relative min-h-[78vh] lg:min-h-[90vh]">
       {/* Background Effects */}
       <GradientMesh variant="primary" />
       <FloatingShapes count={8} />
 
       <div className="max-w-[var(--max-content-width)] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 h-full">
-        <div className="grid lg:grid-cols-2 gap-12 min-h-[90vh]">
+        <div className="grid lg:grid-cols-2 gap-12 min-h-[78vh] lg:min-h-[90vh]">
           {/* Text content */}
           <motion.div
-            className="text-center lg:text-left flex flex-col justify-center py-20"
+            className="text-center lg:text-left flex flex-col justify-start lg:justify-center pt-6 pb-2 lg:py-20"
             variants={staggerContainer}
-            initial="hidden"
-            animate="visible"
+            initial={false}
+            animate={controls}
           >
             {/* Main Headline - EREDETI SZÖVEG */}
             <motion.h1
-              className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-12 leading-tight"
+              className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 lg:mb-12 leading-tight"
               variants={fadeInUp}
             >
               <span className="text-[var(--color-text-primary)]">
@@ -49,16 +63,16 @@ export function HeroSection() {
           {/* Mobile Expert Image - positioned at section bottom, overlapping next section */}
           <motion.div
             className="block lg:hidden absolute bottom-0 left-1/2 -translate-x-1/2 z-20"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            initial={false}
+            animate={controls}
+            variants={mobileImageVariants}
           >
             <Image
               src="/images/founders/balogh-monika-szakerto-Szerkesztve.png"
               alt="Balogh Mónika - szakértő"
-              width={300}
-              height={450}
-              className="mx-auto max-h-[40vh] w-auto object-contain"
+              width={500}
+              height={750}
+              className="mx-auto max-h-[50vh] w-auto object-contain"
               priority
             />
           </motion.div>
@@ -66,9 +80,9 @@ export function HeroSection() {
           {/* Expert Image - Balogh Mónika - nagy kép, teteje a szöveg tetejéhez */}
           <motion.div
             className="hidden lg:block absolute right-0 bottom-0 w-1/2"
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+            initial={false}
+            animate={controls}
+            variants={desktopImageVariants}
           >
             <div className="relative w-full flex justify-end">
               <Image

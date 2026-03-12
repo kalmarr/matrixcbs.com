@@ -7,11 +7,6 @@ import { useReportWebVitals } from 'next/web-vitals'
 
 export function WebVitals() {
   useReportWebVitals((metric) => {
-    // Only log in development or send to analytics in production
-    if (process.env.NODE_ENV === 'development') {
-      console.log(metric)
-    }
-
     // Send to analytics if available
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', metric.name, {

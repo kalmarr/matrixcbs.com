@@ -72,6 +72,11 @@ export function ScrollReveal({
   useEffect(() => {
     const timer = setTimeout(() => {
       setFallbackVisible(true);
+      // DOM-level fallback: ha FM nem animált, közvetlen style override
+      if (ref.current) {
+        ref.current.style.opacity = '1';
+        ref.current.style.transform = 'none';
+      }
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
@@ -138,6 +143,11 @@ export function StaggerContainer({
   useEffect(() => {
     const timer = setTimeout(() => {
       setFallbackVisible(true);
+      // DOM-level fallback: ha FM nem animált, közvetlen style override
+      if (ref.current) {
+        ref.current.style.opacity = '1';
+        ref.current.style.transform = 'none';
+      }
     }, 1000);
     return () => clearTimeout(timer);
   }, []);

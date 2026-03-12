@@ -4,90 +4,122 @@ Minden fejlesztési feladat BEFEJEZÉSE után, commit ELŐTT végezd el az aláb
 
 ## Automatikus ellenőrzés (parancsok)
 
-### Route védelem
+### TypeScript típusellenőrzés
 ```bash
-# Védtelen route-ok keresése (auth/middleware hiány)
-php artisan route:list
+npx tsc --noEmit
 ```
-Ellenőrizd: minden nem-publikus route-nak van-e `auth`, `verified`, `throttle` middleware-je.
+Nincs típushiba → biztonságos.
+
+### Build ellenőrzés
+```bash
+npm run build
+```
+Sikeres build → nincs szintaktikai vagy import hiba.
 
 ### Veszélyes kód minták keresése
 ```bash
-# Raw query, unescaped output, eval keresés
-grep -rn "DB::raw\|{!!\|eval(" app/
+# Nyers HTML renderelés (XSS kockázat) — keress rá: dangerously Set Inner HTML (egybeírva)
+grep -rn "dangerouslyS" src/
 
 # Debug kód maradt-e benne
-grep -rn "dd(\|dump(\|var_dump(\|ray(" app/ resources/
-
-# Nyitott kérdések áttekintése
-grep -rn "TODO\|FIXME\|HACK\|XXX" app/
+grep -rn "console\.log\|console\.debug\|debugger" src/ --include="*.ts" --include="*.tsx"
 
 # Hardcoded jelszó/token/secret keresés
-grep -rn "password.*=.*['\"].*['\"\|secret.*=.*['\"].*['\"\|token.*=.*['\"]" app/ config/
+grep -rn "password.*=.*['\"].*['\"\|secret.*=.*['\"].*['\"\|token.*=.*['\"]" src/
+
+# Nyitott kérdések áttekintése
+grep -rn "TODO\|FIXME\|HACK\|XXX" src/
 ```
 
 ### Semgrep (ha elérhető)
 ```bash
-# Automatikus biztonsági audit
-semgrep --config=auto app/
-
-# Vagy specifikus PHP/Laravel szabályokkal
-semgrep --config=p/php app/
-semgrep --config=p/laravel app/
+semgrep --config=auto src/
+semgrep --config=p/typescript src/
+semgrep --config=p/react src/
 ```
 
 ## Manuális ellenőrzés
 
 ### Minden módosításnál
-- [ ] Minden új route-hoz van-e middleware (auth, verified, throttle)?
-- [ ] .env.example frissítve van-e ha új env változó került be?
+- [ ] Új API route-hoz van-e auth védelem (`auth-guard.ts` vagy middleware)?
+- [ ] `.env.example` frissítve van-e ha új env változó került be?
 - [ ] Nem maradt-e debug kód a commitban?
+- [ ] TypeScript strict mód hibák javítva?
 
-### Új Model létrehozásakor
-- [ ] `$fillable` explicit felsorolva (NE `$guarded = []`)
-- [ ] `$hidden` beállítva érzékeny mezőkre (password, remember_token, api_token, stb.)
-- [ ] `$casts` beállítva ahol szükséges (date, boolean, encrypted, stb.)
+### Új API route létrehozásakor
+- [ ] Admin route-ok: `requireAuth()` hívás az `auth-guard.ts`-ből
+- [ ] Publikus route-ok: rate limiting beállítva (`rateLimit.ts`)
+- [ ] Input validálás Zod sémával (`validations.ts`)
+- [ ] Response: `jsonResponse()` / `badRequestResponse()` az `api-utils.ts`-ből (charset)
+- [ ] Origin validálás: `validateOrigin()` POST/PUT/DELETE kéréseknél
+- [ ] Hibakezelés: megfelelő HTTP status kódok, nem szivárog stack trace
 
-### Új Form Request létrehozásakor
-- [ ] `authorize()` metódus implementálva (nem csak `return true`)
-- [ ] Validációs szabályok teljesek és specifikusak
-- [ ] Fájl feltöltésnél: típus whitelist (`mimes:jpg,png,pdf`) + méret limit (`max:5120`)
+### Új komponens létrehozásakor
+- [ ] Server Component alapértelmezetten — `'use client'` csak ha kell
+- [ ] User input escaped (React alapból escaped, de figyeld a nyers HTML-t)
+- [ ] Képeknél: Next.js `<Image>` komponens (automatikus optimalizálás)
 
-### Új API endpoint létrehozásakor
-- [ ] Rate limiting beállítva (`throttle` middleware)
-- [ ] Response formázás Resource/Collection-nel
-- [ ] Hibakezelés: megfelelő HTTP status kódok
+### Prisma / adatbázis módosítás
+- [ ] Migration létrehozva (`npx prisma migrate dev`)
+- [ ] Érzékeny mezők nem kerülnek API response-ba (select/omit használata)
+- [ ] Nincs nyers SQL query validálatlan user inputtal
 
-### Új Controller metódusnál
-- [ ] Policy/Gate jogosultságkezelés implementálva
-- [ ] Input validálás Form Request-tel (nem a controller-ben)
-- [ ] Redirect/response megfelelő
+## Security headerek (next.config.ts)
 
-## Érzékeny területek (auth, payment, user data)
+Ellenőrizd, hogy a következők aktívak:
+- [ ] **HSTS**: `Strict-Transport-Security: max-age=63072000; includeSubDomains`
+- [ ] **X-Frame-Options**: `SAMEORIGIN`
+- [ ] **X-Content-Type-Options**: `nosniff`
+- [ ] **X-XSS-Protection**: `1; mode=block`
+- [ ] **Referrer-Policy**: `strict-origin-when-cross-origin`
+- [ ] **Permissions-Policy**: kamera, mikrofon, geolokáció tiltva
+- [ ] **CSP**: Google Analytics és Facebook kivételekkel
+
+## Middleware védelem (middleware.ts)
+
+- [ ] `/admin/*` route-ok átirányítanak `/admin/login`-ra ha nincs session
+- [ ] `/api/admin/*` route-ok 401-et adnak ha nincs session
+- [ ] `/api/auth/*` route-ok mindig elérhetők
+- [ ] Karbantartási mód ellenőrzés aktív
+
+## Meglévő biztonsági implementációk
+
+Az alábbi fájlok tartalmazzák a projekt biztonsági logikáját — módosítás előtt olvasd el:
+
+| Fájl | Cél |
+|------|-----|
+| `src/lib/auth.ts` | NextAuth konfiguráció (JWT, Credentials) |
+| `src/lib/auth-guard.ts` | API route auth middleware |
+| `src/lib/security.ts` | Origin validálás, CSRF védelem |
+| `src/lib/sanitize-html.ts` | HTML sanitizálás (DOMPurify) |
+| `src/lib/rateLimit.ts` | Rate limiting (LRU cache) |
+| `src/lib/validations.ts` | Zod validációs sémák |
+| `src/lib/api-utils.ts` | API response helperek (charset=utf-8) |
+| `middleware.ts` | Edge middleware (auth + maintenance redirect) |
+| `next.config.ts` | Security headerek (CSP, HSTS, stb.) |
+
+## Érzékeny területek
 
 Ha a módosítás az alábbi területeket érinti, KÜLÖN ellenőrizd:
 
-### CSRF védelem
-- [ ] Minden POST/PUT/PATCH/DELETE form-ban van `@csrf`
-- [ ] AJAX kérésekhez X-CSRF-TOKEN header beállítva
+### Autentikáció (auth.ts, auth-guard.ts)
+- [ ] JWT token lejárat megfelelő (24 óra)
+- [ ] Jelszó bcrypt hash-eléssel tárolva
+- [ ] Session invalidálás működik
 
-### SQL injection védelem
-- [ ] Nincs `DB::raw()` user inputtal
-- [ ] Nincs `whereRaw()` validálatlan adattal
-- [ ] Minden lekérdezés Eloquent-tel vagy Query Builder-rel, paraméteres kötéssel
+### Fájl feltöltés (api/admin/media)
+- [ ] MIME type ellenőrzés (csak kép típusok)
+- [ ] Fájlméret limit
+- [ ] Fájlnév sanitizálás (nincs path traversal)
+- [ ] Sharp-pal feldolgozott képek (nem az eredeti fájl szolgáltatva)
 
-### XSS védelem
-- [ ] Minden user-generated content `{{ }}` (escaped)
-- [ ] `{!! !!}` csak ha a tartalom 100% biztonságos (pl. saját HTML generálás)
-- [ ] Input sanitizálás Purifier-rel ha HTML engedélyezett
+### Kapcsolatfelvételi űrlap (api/contact)
+- [ ] Zod validálás minden mezőre
+- [ ] Honeypot mező bot-szűréshez
+- [ ] Timing validálás (min. 3 másodperc)
+- [ ] Rate limiting aktív (10 kérés / 15 perc / IP)
+- [ ] Email header injection védelem
 
-### Jogosultságkezelés
-- [ ] Policy/Gate minden érzékeny művelethez
-- [ ] Ne csak `auth` middleware — ellenőrizd, hogy az adott user ahhoz az erőforráshoz fér-e hozzá
-- [ ] Soft-deleted rekordokhoz nincs publikus hozzáférés
-
-### Fizetési integráció
-- [ ] Webhook signature verification implementálva
-- [ ] Összegek szerver-oldalon számítva (nem kliens-oldali adatból)
-- [ ] Tranzakció logolva (összeg, user, időpont, státusz)
-- [ ] Hibakezelés: sikertelen fizetés kezelése, visszaállítás
+### Cron endpoint (api/cron/publish-scheduled)
+- [ ] CRON_SECRET token ellenőrzés
+- [ ] Nem érhető el token nélkül
