@@ -29,7 +29,7 @@ export default function ErrorPage({
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-16 bg-[var(--color-bg-dark)] relative overflow-hidden">
       {/* Animated background grid */}
-      <div className="matrix-grid absolute inset-0 opacity-30" />
+      <div className="mcbs-grid absolute inset-0 opacity-30" />
 
       {/* Animated glow effect */}
       <div

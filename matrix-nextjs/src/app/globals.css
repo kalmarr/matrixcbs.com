@@ -149,15 +149,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Matrix Grid Pattern Background */
-.matrix-grid {
+.mcbs-grid {
   background-image:
     linear-gradient(rgba(145, 144, 147, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(145, 144, 147, 0.05) 1px, transparent 1px);
   background-size: 50px 50px;
 }
 
-/* Grain Overlay */
-.grain-overlay::before {
+/* Grain Texture */
+.grain-texture::before {
   content: '';
   position: fixed;
   top: 0;
@@ -184,17 +184,15 @@ h1, h2, h3, h4, h5, h6 {
   backdrop-filter: blur(12px);
 }
 
-/* Fallback for Framer Motion animations on older browsers */
-/* Ha az IntersectionObserver nem működik, a tartalom legyen látható */
-@supports not (animation-timeline: view()) {
-  /* Fallback: reduced motion prefers - show content immediately */
+/* Framer Motion SSR Android fallback:
+   FM initial="hidden"-t style="opacity:0"-ként rendereli SSR-ben.
+   Ha a kliens-oldali hydration nem fut le (Android Chrome),
+   ez a szabály 2s után láthatóvá teszi a tartalmat. */
+@keyframes fm-fallback-reveal {
+  to { opacity: 1 !important; transform: none !important; visibility: visible !important; }
 }
 
-/* Samsung Internet specific fix - ensure content is visible */
-@media screen and (-webkit-min-device-pixel-ratio: 0) {
-  /* Force GPU acceleration for animations */
-  [style*="opacity"] {
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-  }
+[style*="opacity:0"],
+[style*="opacity: 0"] {
+  animation: fm-fallback-reveal 0.3s ease 2s forwards;
 }

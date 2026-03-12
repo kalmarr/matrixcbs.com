@@ -1,0 +1,25 @@
+#!/bin/bash
+# =============================================================================
+# MATRIX CBS Deploy Configuration
+# FIGYELEM: Másold config.sh-ra és töltsd ki az adatokat!
+# A config.sh NEM kerülhet git-be! (.gitignore tartalmazza)
+# =============================================================================
+
+# SSH (kulcs-alapú autentikáció)
+VPS_HOST="srv.knh.hu"
+VPS_SSH_PORT="17791"
+VPS_SSH_USER="your_ssh_user"
+VPS_SSH_KEY="${HOME}/.ssh/id_ed25519"
+
+# ISPConfig könyvtárak
+REMOTE_BASE="/var/www/clients/client0/web1"
+REMOTE_PRIVATE="${REMOTE_BASE}/private"
+REMOTE_WEB="${REMOTE_BASE}/web"
+
+# Alkalmazás
+APP_NAME="matrixcbs"
+APP_PORT="3001"
+
+# Lokális könyvtárak (NE MÓDOSÍTSD!)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"

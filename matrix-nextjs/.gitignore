@@ -48,3 +48,7 @@ next-env.d.ts
 .next.old
 .next_old
 
+# Deploy scripts (szerver-specifikus, nem commitolandó)
+/scripts/deploy.sh
+/scripts/config.sh
+

@@ -131,7 +131,7 @@ export default function RootLayout({
   return (
     <html lang="hu" className="scroll-smooth" data-scroll-behavior="smooth">
       <body
-        className={`${outfit.variable} ${plusJakarta.variable} antialiased bg-[var(--color-bg-dark)] text-[var(--color-text-primary)] matrix-grid grain-overlay`}
+        className={`${outfit.variable} ${plusJakarta.variable} antialiased bg-[var(--color-bg-dark)] text-[var(--color-text-primary)] mcbs-grid grain-texture`}
       >
         <ClientAnalytics />
         {children}
